@@ -1,0 +1,9 @@
+{
+  "biome.enabled": true,
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "always"
+  },
+  "editor.detectIndentation": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
