@@ -1,22 +1,22 @@
 <script lang="ts">
-import { Button } from "@components/ui/button/index.js";
+  import { Button } from "@components/ui/button/index.js";
 
-let {
-  content = $bindable(),
-  error,
-  loading,
-  onSubmit,
-} = $props<{
-  content: string;
-  error: string;
-  loading: boolean;
-  onSubmit: (e: Event) => void;
-}>();
+  let {
+    content = $bindable(),
+    error,
+    loading,
+    onSubmit,
+  } = $props<{
+    content: string;
+    error: string;
+    loading: boolean;
+    onSubmit: (e: Event) => void;
+  }>();
 
-function handleSubmit(e: Event) {
-  e.preventDefault();
-  onSubmit(e);
-}
+  function handleSubmit(e: Event) {
+    e.preventDefault();
+    onSubmit(e);
+  }
 </script>
 
 <form class="mb-6" onsubmit={handleSubmit}>
@@ -33,7 +33,7 @@ function handleSubmit(e: Event) {
     <div class="text-red-600 dark:text-red-400 text-sm font-medium">
       {error}
     </div>
-    
+
     <Button
       type="submit"
       class="w-32 bg-linear-to-r from-orange-300 to-amber-300 rounded-lg border-amber-200 shadow-md hover:from-orange-400 hover:to-yellow-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -43,6 +43,6 @@ function handleSubmit(e: Event) {
         <span class="inline-block animate-spin mr-2">⏳</span>
       {/if}
       Share
-  </Button>
+    </Button>
   </div>
 </form>

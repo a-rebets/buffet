@@ -1,50 +1,50 @@
 <script lang="ts">
-import type { Thought } from "@/types";
-import Links from "./components/links.svelte";
-import ThoughtForm from "./components/thoughts/form.svelte";
-import ThoughtsList from "./components/thoughts/list.svelte";
+  import type { Thought } from "@/types";
+  import Links from "./components/links.svelte";
+  import ThoughtForm from "./components/thoughts/form.svelte";
+  import ThoughtsList from "./components/thoughts/list.svelte";
 
-const apiBase =
-  (document.querySelector('meta[name="api-base"]') as HTMLMetaElement)
-    ?.content || "/api";
+  const apiBase =
+    (document.querySelector('meta[name="api-base"]') as HTMLMetaElement)
+      ?.content || "/api";
 
-let thoughts = $state<Thought[]>([]);
-let content = $state("");
-let error = $state("");
-let loading = $state(false);
+  let thoughts = $state<Thought[]>([]);
+  let content = $state("");
+  let error = $state("");
+  let loading = $state(false);
 
-async function load() {
-  const res = await fetch(`${apiBase}/thoughts`);
-  if (!res.ok) return;
-  thoughts = await res.json();
-}
-
-async function submit(e: Event) {
-  e.preventDefault();
-  error = "";
-  loading = true;
-  const res = await fetch(`${apiBase}/thoughts`, {
-    method: "POST",
-    body: new URLSearchParams({ content }),
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  });
-  loading = false;
-  if (res.status === 201) {
+  async function load() {
+    const res = await fetch(`${apiBase}/thoughts`);
+    if (!res.ok) return;
     thoughts = await res.json();
-    content = "";
-  } else {
-    error = await res.text();
   }
-}
 
-async function del(id: number) {
-  const res = await fetch(`${apiBase}/thoughts/${id}`, { method: "DELETE" });
-  if (res.ok) thoughts = await res.json();
-}
+  async function submit(e: Event) {
+    e.preventDefault();
+    error = "";
+    loading = true;
+    const res = await fetch(`${apiBase}/thoughts`, {
+      method: "POST",
+      body: new URLSearchParams({ content }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    });
+    loading = false;
+    if (res.status === 201) {
+      thoughts = await res.json();
+      content = "";
+    } else {
+      error = await res.text();
+    }
+  }
 
-$effect(() => {
-  load();
-});
+  async function del(id: number) {
+    const res = await fetch(`${apiBase}/thoughts/${id}`, { method: "DELETE" });
+    if (res.ok) thoughts = await res.json();
+  }
+
+  $effect(() => {
+    load();
+  });
 </script>
 
 <div
@@ -80,12 +80,7 @@ $effect(() => {
         Share Your Thoughts
       </h2>
 
-      <ThoughtForm
-        bind:content
-        {error}
-        {loading}
-        onSubmit={submit}
-      />
+      <ThoughtForm bind:content {error} {loading} onSubmit={submit} />
 
       <ThoughtsList {thoughts} onDelete={del} />
     </div>

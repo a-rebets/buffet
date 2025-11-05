@@ -1,16 +1,18 @@
 <script lang="ts">
-import type { Thought } from "@/types";
-import ThoughtCard from "./card.svelte";
+  import type { Thought } from "@/types";
+  import ThoughtCard from "./card.svelte";
 
-const { thoughts, onDelete } = $props<{
-  thoughts: Thought[];
-  onDelete: (id: number) => void;
-}>();
+  const { thoughts, onDelete } = $props<{
+    thoughts: Thought[];
+    onDelete: (id: number) => void;
+  }>();
 </script>
 
 {#if !thoughts || thoughts.length === 0}
   <div class="text-center pb-10 pt-5">
-    <div class="inline-block p-4 bg-neutral-100 dark:bg-neutral-700 rounded-full mb-4">
+    <div
+      class="inline-block p-4 bg-neutral-100 dark:bg-neutral-700 rounded-full mb-4"
+    >
       <svg
         class="w-12 h-12 text-neutral-400 dark:text-neutral-500"
         fill="none"

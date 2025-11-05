@@ -53,6 +53,9 @@
             "useConst": "off"
           }
         }
+      },
+      "formatter": {
+        "enabled": false
       }
     }
   ]
