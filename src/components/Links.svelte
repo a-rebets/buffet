@@ -1,5 +1,5 @@
 <script lang="ts">
-  const links = [
+const links = [
     {
       link: "https://effect.website/",
       title: "Effect",

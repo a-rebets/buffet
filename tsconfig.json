@@ -13,7 +13,13 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@components": ["./src/components"],
+      "@components/*": ["./src/components/*"],
+      "@hooks": ["./src/hooks"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@lib": ["./src/lib"],
+      "@lib/*": ["./src/lib/*"]
     },
 
     "strict": true,
@@ -28,6 +34,6 @@
 
     "types": ["@types/bun", "svelte"]
   },
-  "include": ["src/**/*", "src/**/*.svelte"],
+  "include": ["src/**/*", "src/**/*.svelte", "server/**/*"],
   "exclude": ["node_modules", "dist"]
 }

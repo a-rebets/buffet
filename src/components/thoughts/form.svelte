@@ -1,4 +1,6 @@
 <script lang="ts">
+import { Button } from "@components/ui/button/index.js";
+
 let {
   content = $bindable(),
   error,
@@ -31,15 +33,16 @@ function handleSubmit(e: Event) {
     <div class="text-red-600 dark:text-red-400 text-sm font-medium">
       {error}
     </div>
-    <button
+    
+    <Button
       type="submit"
-      class="px-6 py-2 text-neutral-900 dark:text-neutral-900 bg-linear-to-r from-orange-300 to-amber-300 rounded-lg border border-amber-200 shadow-md hover:from-orange-400 hover:to-yellow-400 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-400 active:translate-y-[0.5px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      class="w-32 bg-linear-to-r from-orange-300 to-amber-300 rounded-lg border-amber-200 shadow-md hover:from-orange-400 hover:to-yellow-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
       disabled={loading}
     >
       {#if loading}
         <span class="inline-block animate-spin mr-2">⏳</span>
       {/if}
-      <span class="submit-text">Share</span>
-    </button>
+      Share
+  </Button>
   </div>
 </form>

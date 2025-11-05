@@ -14,11 +14,15 @@
     "@types/bun": "latest",
     "bun-plugin-svelte": "latest",
     "bun-plugin-tailwind": "latest",
-    "typescript": "latest",
-    "tailwindcss": "latest"
+    "typescript": "latest"
   },
   "dependencies": {
+    "clsx": "latest",
     "effect": "latest",
-    "svelte": "latest"
+    "svelte": "latest",
+    "tailwindcss": "latest",
+    "tailwind-merge": "latest",
+    "tailwind-variants": "latest",
+    "tw-animate-css": "latest"
   }
 }
