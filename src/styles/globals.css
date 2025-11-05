@@ -1,9 +1,8 @@
 @import "tailwindcss";
 
-@source "../**/*.tsx";
-@source "../../public/**/*.html";
-
 @custom-variant dark (&:is(.dark *));
+
+@source "../**/*.svelte";
 
 html,
 body {

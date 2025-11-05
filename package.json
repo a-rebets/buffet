@@ -4,18 +4,21 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --watch server/index.tsx",
+    "dev": "bun run --hot server/index.ts",
     "build": "rm -rf dist && bun build --production --outdir=dist public/index.html",
-    "start": "ENV=production bun run server/index.tsx"
+    "start": "ENV=production bun run server/index.ts",
+    "format": "biome format --write"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
-    "@kitajs/html": "latest",
     "@types/bun": "latest",
-    "bun-plugin-tailwind": "latest"
+    "bun-plugin-svelte": "latest",
+    "bun-plugin-tailwind": "latest",
+    "typescript": "latest",
+    "tailwindcss": "latest"
   },
   "dependencies": {
     "effect": "latest",
-    "tailwindcss": "latest"
+    "svelte": "latest"
   }
 }

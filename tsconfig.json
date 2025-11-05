@@ -4,8 +4,6 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "jsxImportSource": "@kitajs/html",
     "allowJs": true,
 
     "moduleResolution": "bundler",
@@ -28,6 +26,8 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
-    "types": ["@kitajs/html/htmx.d.ts"]
-  }
+    "types": ["@types/bun", "svelte"]
+  },
+  "include": ["src/**/*", "src/**/*.svelte"],
+  "exclude": ["node_modules", "dist"]
 }

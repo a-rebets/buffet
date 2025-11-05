@@ -24,6 +24,9 @@
       "quoteStyle": "double"
     }
   },
+  "html": {
+    "experimentalFullSupportEnabled": true
+  },
   "css": {
     "parser": {
       "tailwindDirectives": true
@@ -36,5 +39,21 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.svelte"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          },
+          "style": {
+            "useConst": "off"
+          }
+        }
+      }
+    }
+  ]
 }

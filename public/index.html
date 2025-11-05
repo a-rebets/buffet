@@ -5,24 +5,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Buffet - Simple fresh web dev</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7G0jpSiXtQfjTcx4O6Zu37oIpECFHyaD8KrwM1" />
+  <link rel="icon" type="image/png" sizes="32x32"
+    href="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7G0jpSiXtQfjTcx4O6Zu37oIpECFHyaD8KrwM1" />
   <link rel="apple-touch-icon" href="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7G36z7AU98EMFmqYgawV09ps7Btn5QheWLfdKy" />
   <link rel="stylesheet" href="@/styles/globals.css" />
-  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
-    integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
-    crossorigin="anonymous"></script>
-  <script src="@/client.js"></script>
+  <script type="module" src="@/main.ts"></script>
+  <meta name="api-base" content="/api" />
 </head>
 
 <body>
-  <!-- HTMX injects the actual page content on load -->
-  <div hx-get="/page/home" hx-trigger="load" hx-swap="outerHTML" class="size-full">
-    <!-- Loading state -->
-    <div class="text-center py-16">
-      <div class="inline-block animate-spin text-blue-600 text-4xl">⏳</div>
-      <p class="text-gray-600 mt-4">Loading...</p>
-    </div>
-  </div>
+  <div id="app"></div>
 </body>
 
 </html>
