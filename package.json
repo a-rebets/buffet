@@ -1,0 +1,21 @@
+{
+  "name": "buffet",
+  "module": "server/index.tsx",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch server/index.tsx",
+    "build": "rm -rf dist && bun build --production --outdir=dist public/index.html",
+    "start": "ENV=production bun run server/index.tsx"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.3",
+    "@kitajs/html": "latest",
+    "@types/bun": "latest",
+    "bun-plugin-tailwind": "latest"
+  },
+  "dependencies": {
+    "effect": "latest",
+    "tailwindcss": "latest"
+  }
+}
