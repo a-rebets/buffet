@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "bun run --hot server/index.ts",
-    "build": "rm -rf dist && bun build --production --outdir=dist public/index.html",
-    "start": "ENV=production bun run server/index.ts",
+    "build": "rm -rf dist && bun run scripts/build.ts",
+    "start": "NODE_ENV=production bun run server/index.ts",
     "format": "biome format --write",
     "lint": "biome check . && svelte-check"
   },

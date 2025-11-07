@@ -7,6 +7,8 @@ import { initializeSchema, SqlLive } from "./db";
 import { ThoughtHandlersLive } from "./thoughts";
 import { ThoughtRpcs } from "./thoughts/rpc";
 
+const isDev = process.env.NODE_ENV !== "production";
+
 const rpcLayer = RpcServer.layerHttpRouter({
   group: ThoughtRpcs,
   path: "/rpc",
@@ -19,13 +21,25 @@ const rpcLayer = RpcServer.layerHttpRouter({
 
 const { handler, dispose } = HttpLayerRouter.toWebHandler(rpcLayer);
 
+async function handlerWithStaticFiles(req: Request) {
+  const path = new URL(req.url).pathname;
+  if (path.startsWith("/rpc")) {
+    return handler(req);
+  }
+  const file = Bun.file(`dist${path}`);
+  if (await file.exists()) {
+    return new Response(file);
+  }
+  return new Response(null, { status: 404 });
+}
+
 Effect.runPromise(initializeSchema.pipe(Effect.provide(SqlLive))).then(() => {
   const server = serve({
     routes: {
-      "/": index,
+      "/": isDev ? index : Bun.file("dist/index.html"),
     },
-    fetch: (req) => handler(req),
-    development: process.env.ENV !== "production",
+    fetch: (req) => (isDev ? handler(req) : handlerWithStaticFiles(req)),
+    development: { console: isDev },
   });
 
   console.log(`🚀 Server running on ${server.url}`);
