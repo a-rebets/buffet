@@ -12,6 +12,7 @@ const result = await Bun.build({
   minify: true,
   sourcemap: false,
   target: "browser",
+  splitting: true,
 });
 
 if (result.success) {
