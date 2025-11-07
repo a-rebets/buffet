@@ -1,14 +1,30 @@
 <script lang="ts">
-  import type { Thought } from "@/types";
+  import { withRpcClient } from "@lib/rpc-client";
+  import { thoughtsStore } from "@lib/stores";
+  import { Effect } from "effect";
   import ThoughtCard from "./card.svelte";
 
-  const { thoughts, onDelete } = $props<{
-    thoughts: Thought[];
-    onDelete: (id: number) => void;
-  }>();
+  function del(id: number) {
+    Effect.runPromise(
+      withRpcClient((client) =>
+        Effect.gen(function* () {
+          yield* client.DeleteThought({ id });
+          thoughtsStore.update((thoughts) =>
+            thoughts.filter((t) => t.id !== id)
+          );
+        })
+      ).pipe(
+        Effect.catchAll((error) =>
+          Effect.sync(() => {
+            console.error("Failed to delete thought:", error);
+          })
+        )
+      )
+    );
+  }
 </script>
 
-{#if !thoughts || thoughts.length === 0}
+{#if !$thoughtsStore || $thoughtsStore.length === 0}
   <div class="text-center pb-10 pt-5">
     <div
       class="inline-block p-4 bg-neutral-100 dark:bg-neutral-700 rounded-full mb-4"
@@ -37,8 +53,8 @@
   </div>
 {:else}
   <div id="thoughts-list" class="space-y-3">
-    {#each thoughts as thought (thought.id)}
-      <ThoughtCard {thought} {onDelete} />
+    {#each $thoughtsStore as thought (thought.id)}
+      <ThoughtCard {thought} onDelete={del} />
     {/each}
   </div>
 {/if}

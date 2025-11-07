@@ -1,67 +1,43 @@
+import { HttpLayerRouter } from "@effect/platform";
+import { RpcSerialization, RpcServer } from "@effect/rpc";
 import { serve } from "bun";
-import { Effect } from "effect";
+import { Effect, Layer } from "effect";
 import index from "../public/index.html";
-import { deleteThought, getAllThoughts, insertThought } from "./db";
+import { initializeSchema, SqlLive } from "./db";
+import { ThoughtHandlersLive } from "./thoughts";
+import { ThoughtRpcs } from "./thoughts/rpc";
 
-const server = serve({
-  routes: {
-    "/": index,
+const rpcLayer = RpcServer.layerHttpRouter({
+  group: ThoughtRpcs,
+  path: "/rpc",
+  protocol: "http",
+}).pipe(
+  Layer.provide(ThoughtHandlersLive),
+  Layer.provide(RpcSerialization.layerNdjson),
+  Layer.provide(SqlLive),
+);
 
-    "/api/thoughts": {
-      GET: () =>
-        Effect.runPromise(
-          getAllThoughts.pipe(
-            Effect.map(
-              (thoughts) =>
-                new Response(JSON.stringify(thoughts), {
-                  status: 200,
-                  headers: { "Content-Type": "application/json" },
-                }),
-            ),
-          ),
-        ),
+const { handler, dispose } = HttpLayerRouter.toWebHandler(rpcLayer);
 
-      async POST(req) {
-        const formData = await req.formData();
-        const content =
-          (formData.get("content") as string | null)?.trim() ?? "";
-        if (!content) {
-          return new Response("Thought content is required", { status: 400 });
-        }
+Effect.runPromise(initializeSchema.pipe(Effect.provide(SqlLive))).then(() => {
+  const server = serve({
+    routes: {
+      "/": index,
+    },
+    fetch: (req) => handler(req),
+    development: process.env.ENV !== "production",
+  });
 
-        return Effect.runPromise(
-          insertThought(content).pipe(
-            Effect.map(
-              (thoughts) =>
-                new Response(JSON.stringify(thoughts), {
-                  status: 201,
-                  headers: { "Content-Type": "application/json" },
-                }),
-            ),
-          ),
-        );
+  console.log(`🚀 Server running on ${server.url}`);
+
+  process.on("SIGINT", () => {
+    dispose().then(
+      () => {
+        process.exit(0);
       },
-    },
-
-    "/api/thoughts/:id": {
-      DELETE: (req) =>
-        Effect.runPromise(
-          deleteThought(req.params.id).pipe(
-            Effect.flatMap(() => getAllThoughts),
-            Effect.map(
-              (thoughts) =>
-                new Response(JSON.stringify(thoughts), {
-                  status: 200,
-                  headers: { "Content-Type": "application/json" },
-                }),
-            ),
-          ),
-        ),
-    },
-  },
-  fetch: () => new Response("Not Found", { status: 404 }),
-  development:
-    process.env.ENV === "production" ? false : { hmr: true, console: true },
+      () => {
+        process.exit(1);
+      },
+    );
+  });
 });
-
-console.log(`🚀 Server running on ${server.url}`);

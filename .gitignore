@@ -8,7 +8,7 @@ dist
 *.log
 
 # database
-*.db
+*.db*
 
 # code coverage
 coverage

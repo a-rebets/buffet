@@ -1,59 +1,37 @@
 <script lang="ts">
-  import type { Thought } from "@/types";
-  import Links from "./components/links.svelte";
-  import ThoughtForm from "./components/thoughts/form.svelte";
-  import ThoughtsList from "./components/thoughts/list.svelte";
+  import Links from "@components/links.svelte";
+  import ThoughtForm from "@components/thoughts/form.svelte";
+  import ThoughtsList from "@components/thoughts/list.svelte";
+  import { withRpcClient } from "@lib/rpc-client";
+  import { thoughtsStore } from "@lib/stores";
+  import { Effect } from "effect";
+  import { onMount } from "svelte";
 
-  const apiBase =
-    (document.querySelector('meta[name="api-base"]') as HTMLMetaElement)
-      ?.content || "/api";
-
-  let thoughts = $state<Thought[]>([]);
-  let content = $state("");
-  let error = $state("");
-  let loading = $state(false);
-
-  async function load() {
-    const res = await fetch(`${apiBase}/thoughts`);
-    if (!res.ok) return;
-    thoughts = await res.json();
-  }
-
-  async function submit(e: Event) {
-    e.preventDefault();
-    error = "";
-    loading = true;
-    const res = await fetch(`${apiBase}/thoughts`, {
-      method: "POST",
-      body: new URLSearchParams({ content }),
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-    loading = false;
-    if (res.status === 201) {
-      thoughts = await res.json();
-      content = "";
-    } else {
-      error = await res.text();
-    }
-  }
-
-  async function del(id: number) {
-    const res = await fetch(`${apiBase}/thoughts/${id}`, { method: "DELETE" });
-    if (res.ok) thoughts = await res.json();
-  }
-
-  $effect(() => {
-    load();
+  onMount(() => {
+    Effect.runPromise(
+      withRpcClient((client) =>
+        Effect.gen(function* () {
+          const thoughts = yield* client.GetThoughts();
+          thoughtsStore.set(thoughts);
+        })
+      ).pipe(
+        Effect.catchAll((error) =>
+          Effect.sync(() => {
+            console.error("Failed to load thoughts:", error);
+          })
+        )
+      )
+    );
   });
 </script>
 
 <div
-  class="min-h-full h-fit w-full bg-linear-to-br from-amber-50 to-amber-100 dark:from-neutral-950 dark:to-neutral-900"
+  class="min-h-screen h-fit w-full bg-linear-to-br from-amber-50 to-amber-100 dark:from-neutral-950 dark:to-neutral-900"
 >
   <div class="container max-w-6xl mx-auto px-4 py-8">
     <header class="text-center mb-10">
       <h1
-        class="text-5xl font-light tracking-wide font-serif text-transparent bg-clip-text bg-linear-to-b from-yellow-500 from-40% to-amber-600 mb-3 flex items-center justify-center gap-3"
+        class="text-5xl font-light tracking-wide font-serif text-transparent bg-clip-text bg-linear-to-b from-yellow-400 from-40% to-amber-500 mb-3 flex items-center justify-center gap-3"
       >
         <img
           src="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7G36z7AU98EMFmqYgawV09ps7Btn5QheWLfdKy"
@@ -68,9 +46,7 @@
         A fresh and simple full-stack template
       </p>
     </header>
-
     <Links />
-
     <div
       class="bg-white/95 dark:bg-neutral-900/60 rounded-xl border border-amber-300 dark:border-amber-500 p-6 backdrop-blur-sm"
     >
@@ -79,10 +55,8 @@
       >
         Share Your Thoughts
       </h2>
-
-      <ThoughtForm bind:content {error} {loading} onSubmit={submit} />
-
-      <ThoughtsList {thoughts} onDelete={del} />
+      <ThoughtForm />
+      <ThoughtsList />
     </div>
   </div>
 </div>

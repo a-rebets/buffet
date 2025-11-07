@@ -1,21 +1,41 @@
 <script lang="ts">
   import { Button } from "@components/ui/button/index.js";
+  import { withRpcClient } from "@lib/rpc-client";
+  import { thoughtsStore } from "@lib/stores";
+  import { Effect } from "effect";
 
-  let {
-    content = $bindable(),
-    error,
-    loading,
-    onSubmit,
-  } = $props<{
-    content: string;
-    error: string;
-    loading: boolean;
-    onSubmit: (e: Event) => void;
-  }>();
+  let content = $state("");
+  let loading = $state(false);
+  let error = $state("");
 
   function handleSubmit(e: Event) {
     e.preventDefault();
-    onSubmit(e);
+    const trimmed = content.trim();
+    if (!trimmed) return;
+
+    loading = true;
+    error = "";
+
+    Effect.runPromise(
+      withRpcClient((client) =>
+        Effect.gen(function* () {
+          const newThought = yield* client.CreateThought({
+            content: trimmed,
+          });
+          thoughtsStore.update((thoughts) => [newThought, ...thoughts]);
+          content = "";
+          loading = false;
+        })
+      ).pipe(
+        Effect.catchAll((err) =>
+          Effect.sync(() => {
+            error =
+              err instanceof Error ? err.message : "Failed to create thought";
+            loading = false;
+          })
+        )
+      )
+    );
   }
 </script>
 

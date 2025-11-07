@@ -2,7 +2,7 @@
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
-    "module": "Preserve",
+    "module": "ESNext",
     "moduleDetection": "force",
     "allowJs": true,
 
@@ -14,12 +14,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components": ["./src/components"],
       "@components/*": ["./src/components/*"],
-      "@hooks": ["./src/hooks"],
       "@hooks/*": ["./src/hooks/*"],
-      "@lib": ["./src/lib"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@server/*": ["./server/*"]
     },
 
     "strict": true,

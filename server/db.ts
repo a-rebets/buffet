@@ -1,33 +1,19 @@
-import { Database } from "bun:sqlite";
-import { Effect } from "effect";
-import type { Thought } from "@/types";
+import { BunFileSystem } from "@effect/platform-bun";
+import { SqliteClient } from "@effect/sql-sqlite-bun";
+import { Effect, Layer } from "effect";
 
-const db = new Database("app.db");
-db.run(`
-  CREATE TABLE IF NOT EXISTS thoughts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    content TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+export const SqlLive = SqliteClient.layer({
+  filename: "app.db",
+  disableWAL: true,
+}).pipe(Layer.provide(BunFileSystem.layer));
 
-const getAllThoughts = Effect.sync(
-  () =>
-    db
-      .query("SELECT * FROM thoughts ORDER BY created_at DESC")
-      .all() as Thought[],
-);
-
-const insertThought = (content: string) =>
-  Effect.sync(() => {
-    const stmt = db.prepare("INSERT INTO thoughts (content) VALUES (?)");
-    stmt.run(content);
-    return db
-      .query("SELECT * FROM thoughts ORDER BY created_at DESC")
-      .all() as Thought[];
-  });
-
-const deleteThought = (id: string) =>
-  Effect.sync(() => db.query("DELETE FROM thoughts WHERE id = ?").run(id));
-
-export { getAllThoughts, insertThought, deleteThought };
+export const initializeSchema = Effect.gen(function* () {
+  const sql = yield* SqliteClient.SqliteClient;
+  yield* sql`
+    CREATE TABLE IF NOT EXISTS thoughts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      content TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+});

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Thought } from "@/types";
+  import type { Thought } from "@server/thoughts/rpc";
 
   const { thought, onDelete } = $props<{
     thought: Thought;
@@ -23,11 +23,7 @@
 >
   <div class="flex justify-between items-start gap-3">
     <div class="flex-1 min-w-0">
-      <p
-        class="text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap wrap-break-word text-base leading-relaxed"
-      >
-        {thought.content}
-      </p>
+      <p class="text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap wrap-break-word text-base leading-relaxed">{thought.content}</p>
       <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
         {createdDate}
       </p>
