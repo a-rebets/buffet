@@ -1,0 +1,13 @@
+diff --git a/src/options.ts b/src/options.ts
+index 7e69abc180c978534a656ea97927175d62476880..0673c45a99650dae7c21d6d97c5bbd00a937b179 100644
+--- a/src/options.ts
++++ b/src/options.ts
+@@ -83,7 +83,7 @@ export function getBaseCompileOptions(pluginOptions: SvelteOptions, config: Part
+   return {
+     css: "external",
+     generate,
+-    preserveWhitespace: !minifyWhitespace,
++    preserveWhitespace: false,
+     preserveComments: !shouldMinify,
+     dev: development,
+     customElement,

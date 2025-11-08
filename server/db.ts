@@ -17,3 +17,7 @@ export const initializeSchema = Effect.gen(function* () {
     )
   `;
 });
+
+export const runWithSql = <A, E>(
+  effect: Effect.Effect<A, E, SqliteClient.SqliteClient>,
+): Promise<A> => Effect.runPromise(effect.pipe(Effect.provide(SqlLive)));

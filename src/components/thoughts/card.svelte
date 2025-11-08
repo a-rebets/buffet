@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Thought } from "@server/thoughts/rpc";
+  import type { Thought } from "@server/thoughts/schema";
   import { Button } from "../ui/button";
 
-  const { thought, onDelete } = $props<{
+  const { thought, onDelete, isDeleting = false } = $props<{
     thought: Thought;
     onDelete: (id: number) => void;
+    isDeleting?: boolean;
   }>();
 
   const createdDate = $derived(
@@ -36,7 +37,9 @@
     <Button
       variant="destructive"
       class="text-sm shrink-0 opacity-0 group-hover:opacity-100 rounded-md transition-all border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30 hover:border-red-300 dark:hover:border-red-700 bg-red-50 dark:bg-red-900/20"
-      onclick={() => onDelete(thought.id)}>Delete</Button
+      disabled={isDeleting}
+      onclick={() => onDelete(thought.id)}
+      >{isDeleting ? "Deleting..." : "Delete"}</Button
     >
   </div>
 </div>

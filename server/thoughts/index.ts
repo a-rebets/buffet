@@ -1,32 +1,44 @@
-import { Effect } from "effect";
-import { SqlLive } from "server/db";
+import { Effect, Schema } from "effect";
+import Elysia, { t } from "elysia";
+import { runWithSql } from "server/db";
 import { deleteThought, getAllThoughts, insertThought } from "./db";
-import { ThoughtRpcs } from "./rpc";
+import { ThoughtSchema } from "./schema";
 
-const getThoughtsHandler = () =>
-  getAllThoughts.pipe(
-    Effect.provide(SqlLive),
-    Effect.catchAll(() => Effect.succeed([])),
+export const ThoughtsRouter = new Elysia({ prefix: "/thoughts" })
+  .get("/", async () => {
+    return await runWithSql(
+      getAllThoughts.pipe(Effect.catchAll(() => Effect.succeed([]))),
+    );
+  })
+  .post(
+    "/",
+    async ({ body }) => {
+      const trimmed = body.content.trim();
+      const effect = trimmed
+        ? insertThought(trimmed).pipe(
+            Effect.catchAll(() =>
+              Effect.fail("Failed to create thought" as const),
+            ),
+          )
+        : Effect.fail("Thought content is required");
+
+      return await runWithSql(effect);
+    },
+    {
+      body: Schema.standardSchemaV1(ThoughtSchema.pick("content")),
+    },
+  )
+  .delete(
+    "/:id",
+    async ({ params }) => {
+      const effect = deleteThought(params.id).pipe(
+        Effect.catchAll(() => Effect.fail("Failed to delete thought" as const)),
+      );
+      return await runWithSql(effect);
+    },
+    {
+      params: t.Object({
+        id: t.Number(),
+      }),
+    },
   );
-
-const createThoughtHandler = ({ content }: { content: string }) => {
-  const trimmed = content.trim();
-  return trimmed
-    ? insertThought(trimmed).pipe(
-        Effect.provide(SqlLive),
-        Effect.catchAll(() => Effect.fail("Failed to create thought" as const)),
-      )
-    : Effect.fail("Thought content is required");
-};
-
-const deleteThoughtHandler = ({ id }: { id: number }) =>
-  deleteThought(id).pipe(
-    Effect.provide(SqlLive),
-    Effect.catchAll(() => Effect.fail("Failed to delete thought" as const)),
-  );
-
-export const ThoughtHandlersLive = ThoughtRpcs.toLayer({
-  GetThoughts: getThoughtsHandler,
-  CreateThought: createThoughtHandler,
-  DeleteThought: deleteThoughtHandler,
-});

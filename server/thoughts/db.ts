@@ -1,6 +1,6 @@
 import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { Effect } from "effect";
-import type { Thought } from "./rpc";
+import type { Thought } from "./schema";
 
 const getAllThoughts = Effect.gen(function* () {
   const sql = yield* SqliteClient.SqliteClient;
@@ -32,6 +32,7 @@ const deleteThought = (id: number) =>
         DELETE FROM thoughts 
         WHERE id = ${id}
       `;
+    return { success: true } as const;
   });
 
 export { getAllThoughts, insertThought, deleteThought };

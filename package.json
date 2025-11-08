@@ -1,10 +1,10 @@
 {
   "name": "buffet",
-  "module": "server/index.tsx",
+  "module": "server/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --hot server/index.ts",
+    "dev": "bun run server/index.ts",
     "build": "rm -rf dist && bun run scripts/build.ts",
     "start": "NODE_ENV=production bun run server/index.ts",
     "format": "biome format --fix",
@@ -12,22 +12,27 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
-    "@types/bun": "latest",
-    "bun-plugin-svelte": "latest",
+    "@effect/platform-bun": "latest",
+    "@effect/sql-sqlite-bun": "latest",
+    "@elysiajs/static": "latest",
+    "bun-plugin-svelte": "0.0.6",
     "bun-plugin-tailwind": "latest",
+    "bun-types": "latest",
+    "elysia": "latest",
     "svelte-check": "latest"
   },
   "dependencies": {
-    "@effect/platform": "latest",
-    "@effect/platform-bun": "latest",
-    "@effect/rpc": "latest",
-    "@effect/sql-sqlite-bun": "latest",
+    "@elysiajs/eden": "latest",
+    "@tanstack/svelte-query": "latest",
     "clsx": "latest",
-    "effect": "3.19.2",
+    "effect": "latest",
     "svelte": "latest",
     "tailwind-merge": "latest",
     "tailwind-variants": "latest",
     "tailwindcss": "latest",
     "tw-animate-css": "latest"
+  },
+  "patchedDependencies": {
+    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch"
   }
 }

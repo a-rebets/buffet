@@ -1,41 +1,36 @@
 <script lang="ts">
   import { Button } from "@components/ui/button/index.js";
-  import { withRpcClient } from "@lib/rpc-client";
-  import { thoughtsStore } from "@lib/stores";
-  import { Effect } from "effect";
+  import { apiClient, apiResponse, thoughtsKeys } from "@lib/api";
+  import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 
   let content = $state("");
-  let loading = $state(false);
   let error = $state("");
+
+  const queryClient = useQueryClient();
+
+  const createThought = createMutation(() => ({
+    mutationFn: (newContent: string) =>
+      apiResponse(apiClient.thoughts.post({ content: newContent })),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: thoughtsKeys.all() });
+    },
+  }));
 
   function handleSubmit(e: Event) {
     e.preventDefault();
     const trimmed = content.trim();
     if (!trimmed) return;
 
-    loading = true;
     error = "";
 
-    Effect.runPromise(
-      withRpcClient((client) =>
-        Effect.gen(function* () {
-          const newThought = yield* client.CreateThought({
-            content: trimmed,
-          });
-          thoughtsStore.update((thoughts) => [newThought, ...thoughts]);
-          content = "";
-          loading = false;
-        })
-      ).pipe(
-        Effect.catchAll((err) =>
-          Effect.sync(() => {
-            error =
-              err instanceof Error ? err.message : "Failed to create thought";
-            loading = false;
-          })
-        )
-      )
-    );
+    createThought
+      .mutateAsync(trimmed)
+      .then(() => {
+        content = "";
+      })
+      .catch((err) => {
+        error = err instanceof Error ? err.message : String(err);
+      });
   }
 </script>
 
@@ -57,9 +52,9 @@
     <Button
       type="submit"
       class="w-32 bg-linear-to-r from-orange-300 to-amber-300 rounded-lg border-amber-200 shadow-md hover:from-orange-400 hover:to-yellow-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
-      disabled={loading}
+      disabled={createThought.isPending}
     >
-      {#if loading}
+      {#if createThought.isPending}
         <span class="inline-block animate-spin mr-2">⏳</span>
       {/if}
       Share

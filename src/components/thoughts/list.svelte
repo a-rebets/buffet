@@ -1,30 +1,37 @@
 <script lang="ts">
-  import { withRpcClient } from "@lib/rpc-client";
-  import { thoughtsStore } from "@lib/stores";
-  import { Effect } from "effect";
+  import { apiClient, apiResponse, thoughtsKeys } from "@lib/api";
+  import {
+    createMutation,
+    createQuery,
+    useQueryClient,
+  } from "@tanstack/svelte-query";
   import ThoughtCard from "./card.svelte";
 
-  function del(id: number) {
-    Effect.runPromise(
-      withRpcClient((client) =>
-        Effect.gen(function* () {
-          yield* client.DeleteThought({ id });
-          thoughtsStore.update((thoughts) =>
-            thoughts.filter((t) => t.id !== id)
-          );
-        })
-      ).pipe(
-        Effect.catchAll((error) =>
-          Effect.sync(() => {
-            console.error("Failed to delete thought:", error);
-          })
-        )
-      )
-    );
-  }
+  const queryClient = useQueryClient();
+
+  const thoughtsQuery = createQuery(() => ({
+    queryKey: thoughtsKeys.all(),
+    queryFn: () => apiResponse(apiClient.thoughts.get()),
+  }));
+
+  const deleteThought = createMutation(() => ({
+    mutationFn: (id: number) =>
+      apiResponse(apiClient.thoughts({ id }).delete()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: thoughtsKeys.all() });
+    },
+  }));
 </script>
 
-{#if !$thoughtsStore || $thoughtsStore.length === 0}
+{#if thoughtsQuery.isLoading}
+  <p class="text-center text-neutral-500 dark:text-neutral-400 py-6">
+    Loading thoughts...
+  </p>
+{:else if thoughtsQuery.isError}
+  <div class="text-center text-red-600 dark:text-red-400 py-6">
+    Failed to load thoughts: {(thoughtsQuery.error as Error).message}
+  </div>
+{:else if !thoughtsQuery.data || thoughtsQuery.data.length === 0}
   <div class="text-center pb-10 pt-5">
     <div
       class="inline-block p-4 bg-neutral-100 dark:bg-neutral-700 rounded-full mb-4"
@@ -53,8 +60,13 @@
   </div>
 {:else}
   <div id="thoughts-list" class="space-y-3">
-    {#each $thoughtsStore as thought (thought.id)}
-      <ThoughtCard {thought} onDelete={del} />
+    {#each thoughtsQuery.data as thought (thought.id)}
+      <ThoughtCard
+        {thought}
+        onDelete={deleteThought.mutate}
+        isDeleting={deleteThought.isPending &&
+          deleteThought.variables === thought.id}
+      />
     {/each}
   </div>
 {/if}

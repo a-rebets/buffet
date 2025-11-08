@@ -14,8 +14,9 @@ So why not use them together?
 
 ## Other stuff
 
-For HTML composition, a JSX runtime from [`@kitajs/html`](https://github.com/kitajs/html) is used, to write componentized UI without React.
+The stack has shifted to a more opinionated setup (previously based on HTMX and `@kitajs/html` JSX runtime):
+- [ElysiaJS](https://elysiajs.com/) gives Bun extra powers.
+- [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe.
+- The client is all-in on [Svelte](https://svelte.dev/) with modern runes and `@tanstack/svelte-query` for data.
 
-Right now, interactivity is achieved using [HTMX](https://htmx.org/). Partials are returned directly from server's routes.
-
-**Contributions are welcome** to help make the client-side part more robust and truly usable!
+**Contributions are welcome** to keep polishing the experience!
