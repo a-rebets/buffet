@@ -16,17 +16,19 @@ if (isProduction) {
 }
 
 const app = new Elysia()
-  .onStart(async ({ server }) => {
-    await runWithSql(initializeSchema);
-    console.log(`🚀 Server running on port ${server?.port}`);
-  })
   .use(
-    staticPlugin({
+    await staticPlugin({
       assets: isProduction ? "dist" : "public",
       prefix: "/",
     }),
   )
   .group("/api", (app) => app.use(ThoughtsRouter))
+  .onStart(async ({ server }) => {
+    await runWithSql(initializeSchema);
+    console.log(
+      `${isProduction ? "[PROD]" : "[DEV]"} 🚀 Server running on port ${server?.port}`,
+    );
+  })
   .listen(3000);
 
 export type App = typeof app;

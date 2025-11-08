@@ -2,7 +2,11 @@
   import type { Thought } from "@server/thoughts/schema";
   import { Button } from "../ui/button";
 
-  const { thought, onDelete, isDeleting = false } = $props<{
+  const {
+    thought,
+    onDelete,
+    isDeleting = false,
+  } = $props<{
     thought: Thought;
     onDelete: (id: number) => void;
     isDeleting?: boolean;

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Links from "@components/links.svelte";
   import ThoughtForm from "@components/thoughts/form.svelte";
   import ThoughtsList from "@components/thoughts/list.svelte";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+  import Links from "@/components/links.svelte";
 
   const queryClient = new QueryClient();
 </script>
