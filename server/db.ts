@@ -13,7 +13,9 @@ export const initializeSchema = Effect.gen(function* () {
     CREATE TABLE IF NOT EXISTS thoughts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       content TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      user_id TEXT NOT NULL,
+      FOREIGN KEY(user_id) REFERENCES user(id)
     )
   `;
 });

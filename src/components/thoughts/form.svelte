@@ -51,7 +51,7 @@
 
     <Button
       type="submit"
-      class="w-32 bg-linear-to-r from-orange-300 to-amber-300 rounded-lg border-amber-200 shadow-md hover:from-orange-400 hover:to-yellow-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+      class="w-32 rounded-lg shadow-md border-amber-200 bg-linear-to-r text-card dark:hover:from-orange-400 dark:hover:to-yellow-400 hover:from-orange-500 hover:to-yellow-500 from-orange-400 to-amber-400 dark:from-orange-300 dark:to-amber-300  focus:ring-amber-400 focus:outline-none focus:ring-2"
       disabled={createThought.isPending}
     >
       {#if createThought.isPending}

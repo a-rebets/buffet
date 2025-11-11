@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { cn } from "@/lib/utils";
+
   const links = [
     {
       link: "https://effect.website/",
       title: "Effect",
       description: "Async Typescript done right",
-      icon: "https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7GIDZrRPG0aFSRBt96jvbqTdMfrc7ZenUPNlYh",
+      icon: "https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7GMM4JYRVu2UH9qIRLaiKd48mQhA5GOCyXFlD6",
     },
     {
       link: "https://bun.sh/",
@@ -27,9 +29,13 @@
       href={link.link}
       target="_blank"
       rel="noopener noreferrer"
-      class="group bg-white/95 dark:bg-neutral-900/60 rounded-xl border border-amber-300 dark:border-amber-500 p-6 flex flex-col items-center shadow-md [box-shadow:inset_0_-22px_44px_rgba(251,191,36,0.12)] dark:[box-shadow:inset_0_-18px_36px_rgba(251,191,36,0.08)] hover:shadow-lg hover:[box-shadow:inset_0_-28px_56px_rgba(251,191,36,0.18)] transition-all hover:scale-[1.02] backdrop-blur-sm"
+      class="group bg-white/95 dark:bg-neutral-900/60 rounded-xl border border-amber-300 dark:border-amber-400 p-6 flex flex-col items-center shadow-md [box-shadow:inset_0_-22px_44px_rgba(251,191,36,0.12)] dark:[box-shadow:inset_0_-18px_36px_rgba(251,191,36,0.08)] hover:shadow-lg hover:[box-shadow:inset_0_-28px_56px_rgba(251,191,36,0.18)] transition-all hover:scale-[1.02] backdrop-blur-sm"
     >
-      <img class="size-12 mb-3" src={link.icon} alt={link.title} />
+      <img
+        class={cn("size-12 mb-3", link.title === "Effect" && "dark:invert")}
+        src={link.icon}
+        alt={link.title}
+      />
       <h3
         class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2"
       >

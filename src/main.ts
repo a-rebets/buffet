@@ -1,3 +1,4 @@
+import "sv-router/generated";
 import { mount, unmount } from "svelte";
 import App from "./app.svelte";
 

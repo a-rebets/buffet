@@ -1,2 +1,4 @@
 [serve.static]
 plugins = ["bun-plugin-tailwind", "bun-plugin-svelte"]
+[install]
+exact = true

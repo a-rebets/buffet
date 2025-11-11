@@ -4,14 +4,18 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --watch --no-clear-screen server/index.ts",
+    "dev": "sv-router && bun run --watch --no-clear-screen server/index.ts",
     "build": "rm -rf dist && bun run scripts/build.ts",
     "start": "NODE_ENV=production bun run server/index.ts",
     "format": "biome format --fix",
-    "lint": "biome check --fix . && svelte-check"
+    "lint": "biome check --fix . && svelte-check",
+    "postinstall": "sv-router",
+    "init": "bun run scripts/init.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
+    "@internationalized/date": "latest",
+    "bits-ui": "latest",
     "bun-plugin-svelte": "0.0.6",
     "bun-plugin-tailwind": "latest",
     "bun-types": "latest",
@@ -21,18 +25,23 @@
   "dependencies": {
     "@effect/platform-bun": "latest",
     "@effect/sql-sqlite-bun": "latest",
+    "@elysiajs/cors": "latest",
     "@elysiajs/eden": "latest",
     "@elysiajs/static": "latest",
     "@tanstack/svelte-query": "latest",
+    "better-auth": "latest",
     "clsx": "latest",
+    "date-fns": "latest",
     "effect": "latest",
     "elysia": "latest",
+    "sv-router": "latest",
     "svelte": "latest",
     "tailwind-merge": "latest",
     "tailwind-variants": "latest",
     "tw-animate-css": "latest"
   },
   "patchedDependencies": {
-    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch"
+    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch",
+    "sv-router@0.10.4": "patches/sv-router@0.10.4.patch"
   }
 }

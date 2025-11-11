@@ -1,18 +1,5 @@
 import { $, type BuildOutput } from "bun";
-
-const colors = {
-  accent: "#ffd569",
-  accentBold: "#f59e0b",
-  accentDark: "#b45309",
-  muted: "#a8a29e",
-} as const;
-
-const c = (color: string, text: string, bold = false, background?: string) => {
-  const fg = Bun.color(color, "ansi") ?? "";
-  const rawBg = background ? Bun.color(background, "ansi") : null;
-  const bg = rawBg ? rawBg.replace("[38", "[48") : "";
-  return `${bold ? "\x1b[1m" : ""}${bg}${fg}${text}\x1b[0m`;
-};
+import { c, colors } from "./printing";
 
 export async function printBuildInfo(result: BuildOutput): Promise<void> {
   if (result.success) {
@@ -32,7 +19,7 @@ export async function printBuildInfo(result: BuildOutput): Promise<void> {
 
     assets.sort((a, b) => a.sizeBytes - b.sizeBytes);
 
-    console.log(c(colors.accentBold, "📦 Build Assets", true));
+    console.log(c(colors.primary, "📦 Build Assets", true));
     console.log(c(colors.muted, "─".repeat(54)));
 
     for (const a of assets) {
@@ -47,14 +34,14 @@ export async function printBuildInfo(result: BuildOutput): Promise<void> {
 
     console.log(
       c(
-        colors.accentDark,
+        colors.primary,
         "\n  Buffet is ready. Bon appétit! 🥐  \n",
-        true,
-        colors.accent,
+        false,
+        colors.accentDark,
       ),
     );
   } else {
-    console.error(c("red", `\n🍽️ Buffet build failed!\n`));
+    console.error(c("white", `\n🚨 Buffet build failed!\n`, false, "#440000"));
     for (const log of result.logs) console.error(log);
   }
 }

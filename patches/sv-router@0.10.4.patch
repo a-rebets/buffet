@@ -1,0 +1,23 @@
+diff --git a/src/create-router.svelte.js b/src/create-router.svelte.js
+index e1c4f91c9f3111f3d056921440faa53ea60fdca1..208c94fa4e0165e0ec126608cab7d056b4a99163 100644
+--- a/src/create-router.svelte.js
++++ b/src/create-router.svelte.js
+@@ -26,7 +26,17 @@ export const base = {
+ /** @type {{ value: import('svelte').Component[] }} */
+ export let componentTree = $state({ value: [] });
+ 
+-export let location = $state(updatedLocation());
++export let location = $state({ pathname: '/', search: '', state: null, hash: '' });
++
++if (BROWSER) {
++	queueMicrotask(() => {
++		const updated = updatedLocation();
++		location.pathname = updated.pathname;
++		location.search = updated.search;
++		location.state = updated.state;
++		location.hash = updated.hash;
++	});
++}
+ 
+ /** @type {{ value: Record<string, string> }} */
+ let params = $state({ value: {} });
