@@ -2,6 +2,8 @@
 
 # Buffet (**bu·fè**)
 
+<img src="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7GPbt7g3wBGbMJdRDxOSAZjuQ4Fs31PafCzWc6" alt="Buffet" width="500" height="auto" />
+
 ### Fresh ingredients, simple web dev
 
 Buffet is a template for 2025. Let's face the truth:
@@ -43,9 +45,9 @@ bun i && bun run init && bun dev
 ## Other stuff
 
 The stack has shifted to a more opinionated setup (previously based on HTMX and `@kitajs/html` JSX runtime):
-- [ElysiaJS](https://elysiajs.com/) gives Bun extra powers.
-- [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe.
-- Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by @colinlienard.
-- Client data fetching is done with `@tanstack/svelte-query`.
+- [ElysiaJS](https://elysiajs.com/) gives Bun extra powers
+- [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe
+- Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
+- Client data fetching is done with `@tanstack/svelte-query`
 
 **Contributions are welcome** to keep polishing the experience!
