@@ -56,9 +56,7 @@ const app = new Elysia({
   )
   .get(
     "/*",
-    isProduction
-      ? () => new Response(Bun.file("../dist/index.html"))
-      : indexHtml,
+    isProduction ? () => new Response(Bun.file("dist/index.html")) : indexHtml,
   )
   .onStart(async ({ server }) => {
     await runWithSql(initializeSchema);
