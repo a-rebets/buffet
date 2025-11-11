@@ -21,15 +21,6 @@ The main goals of this template are:
 2. an optimized client bundle
 3. end-to-end type safety
 
-## What's included?
-
-The template is a work in progress, but it's ready for you to fork and ship your next project!
-All basic building blocks are here - auth, DB operations, API, routing, etc.
-
-[Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
-[Shadcn Svelte](https://www.shadcn-svelte.com/docs/installation) components are added to unlock fast UI prototyping.  
-[Better Auth](https://better-auth.com/) is used for authentication.
-
 ## What you are here for
 
 ```bash
@@ -40,7 +31,17 @@ bun i && bun run init && bun dev
 > Bun >= 1.3.0 is required.  
 > If you don't have Bun installed, run `curl -fsSL https://bun.com/install | bash`  
 > If you have an older version of Bun, run `bun upgrade`  
-> If you are on Windows, I'm sorry for you
+> If you are on Windows, I'm sorry for you  
+
+
+## What's included?
+
+The template is a work in progress, but it's ready for you to fork and ship your next project!
+All basic building blocks are here - auth, DB operations, API, routing, etc.
+
+[Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
+[Shadcn Svelte](https://www.shadcn-svelte.com/docs/installation) components are added to unlock fast UI prototyping.  
+[Better Auth](https://better-auth.com/) is used for authentication.
 
 ## Other stuff
 
