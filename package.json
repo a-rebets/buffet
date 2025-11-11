@@ -10,7 +10,8 @@
     "format": "biome format --fix",
     "lint": "biome check --fix . && svelte-check",
     "postinstall": "sv-router",
-    "init": "bun run scripts/init.ts"
+    "init": "bun run scripts/init.ts",
+    "clean": "rm -rf dist/ node_modules/ .router/ .env app.db"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
