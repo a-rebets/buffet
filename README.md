@@ -6,7 +6,7 @@
 
 ### Fresh ingredients, simple web dev
 
-Buffet is a template for 2025. Let's face the truth:
+Buffet is a template for 2025. Let's recognize where we stand:
 - Bun is awesome and powerful
 - Effect is a new way of thinking about type and exception safety
 - TailwindCSS makes styling easier for both humans and AI
@@ -16,14 +16,14 @@ Buffet is a template for 2025. Let's face the truth:
 Since Bun has better support for full-stack web development now, bringing a separate bundler, like Vite, is not required anymore.
 Less config files and dependencies to manage. Better DX.
 
-Main goals of this template are:
+The main goals of this template are:
 1. simplicity
 2. an optimized client bundle
 3. end-to-end type safety
 
 ## What's included?
 
-The template is a work in progress, but it's ready for you to start building your next project!
+The template is a work in progress, but it's ready for you to fork and ship your next project!
 All basic building blocks are here - auth, DB operations, API, routing, etc.
 
 [Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
