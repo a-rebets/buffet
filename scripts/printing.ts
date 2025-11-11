@@ -1,7 +1,7 @@
 export const colors = {
   accent: "#ffd569",
   primary: "#f5bb33",
-  accentDark: "#301603",
+  accentDark: "#482105",
   muted: "#a8a29e",
 } as const;
 
