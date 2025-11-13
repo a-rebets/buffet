@@ -35,6 +35,7 @@
     "date-fns": "latest",
     "effect": "latest",
     "elysia": "latest",
+    "elysia-rate-limit": "latest",
     "sv-router": "latest",
     "svelte": "latest",
     "tailwind-merge": "latest",

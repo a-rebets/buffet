@@ -2,3 +2,4 @@
 plugins = ["bun-plugin-tailwind", "bun-plugin-svelte"]
 [install]
 exact = true
+optional = false

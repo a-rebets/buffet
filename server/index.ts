@@ -1,6 +1,7 @@
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
 import { isProduction } from "elysia/error";
+import { rateLimit } from "elysia-rate-limit";
 import indexHtml from "../public/index.html";
 import { apiRouter } from "./api";
 import { initializeSchema, runWithSql } from "./db";
@@ -32,36 +33,37 @@ await ensureClientBundleInProd();
  */
 
 const app = new Elysia({
-  serve: isProduction
-    ? undefined
-    : {
-        routes: {
-          "/api/*": false,
-        },
-      },
+	serve: isProduction
+		? undefined
+		: {
+				routes: {
+					"/api/*": false,
+				},
+			},
 })
-  .use(compressionPlugin)
-  .use(apiRouter)
-  .use(
-    isProduction
-      ? await staticPlugin({
-          assets: "dist",
-          prefix: "/",
-          alwaysStatic: true,
-          indexHTML: false,
-        })
-      : undefined,
-  )
-  .get(
-    "/*",
-    isProduction ? () => new Response(Bun.file("dist/index.html")) : indexHtml,
-  )
-  .onStart(async ({ server }) => {
-    await runWithSql(initializeSchema);
-    console.log(
-      `${isProduction ? "[PROD]" : "[DEV]"} 🚀 Server running on port ${server?.port}`,
-    );
-  })
-  .listen(3000);
+	.use(rateLimit())
+	.use(compressionPlugin)
+	.use(apiRouter)
+	.use(
+		isProduction
+			? await staticPlugin({
+					assets: "dist",
+					prefix: "/",
+					alwaysStatic: true,
+					indexHTML: false,
+				})
+			: undefined,
+	)
+	.get(
+		"/*",
+		isProduction ? () => new Response(Bun.file("dist/index.html")) : indexHtml,
+	)
+	.onStart(async ({ server }) => {
+		await runWithSql(initializeSchema);
+		console.log(
+			`${isProduction ? "[PROD]" : "[DEV]"} 🚀 Server running on port ${server?.port}`,
+		);
+	})
+	.listen(3000);
 
 export type App = typeof app;
