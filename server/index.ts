@@ -1,20 +1,13 @@
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
+import { isProduction } from "elysia/error";
 import indexHtml from "../public/index.html";
 import { apiRouter } from "./api";
 import { initializeSchema, runWithSql } from "./db";
+import { compressionPlugin } from "./util/compression";
+import { ensureClientBundleInProd } from "./util/production";
 
-const isProduction = process.env.NODE_ENV === "production";
-
-if (isProduction) {
-  const hasClientBundle = await Bun.file("dist/index.html").exists();
-  if (!hasClientBundle) {
-    console.error(
-      "Client bundle not found. Run `bun run build` to generate it.",
-    );
-    process.exit(1);
-  }
-}
+await ensureClientBundleInProd();
 
 /*
  * ========================================================
@@ -39,20 +32,25 @@ if (isProduction) {
  */
 
 const app = new Elysia({
-  serve: {
-    routes: {
-      "/api/*": false,
-    },
-  },
+  serve: isProduction
+    ? undefined
+    : {
+        routes: {
+          "/api/*": false,
+        },
+      },
 })
+  .use(compressionPlugin)
   .use(apiRouter)
   .use(
-    await staticPlugin({
-      assets: isProduction ? "dist" : "public",
-      prefix: "/",
-      alwaysStatic: true,
-      indexHTML: false,
-    }),
+    isProduction
+      ? await staticPlugin({
+          assets: "dist",
+          prefix: "/",
+          alwaysStatic: true,
+          indexHTML: false,
+        })
+      : undefined,
   )
   .get(
     "/*",

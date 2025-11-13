@@ -19,7 +19,7 @@ export async function printBuildInfo(result: BuildOutput): Promise<void> {
 
     assets.sort((a, b) => a.sizeBytes - b.sizeBytes);
 
-    console.log(c(colors.primary, "📦 Build Assets", true));
+    console.log(c(colors.primary, "\n📦 Build Assets", true));
     console.log(c(colors.muted, "─".repeat(54)));
 
     for (const a of assets) {

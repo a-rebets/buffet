@@ -3,9 +3,7 @@ import Elysia from "elysia";
 import { authRouter } from "./auth";
 import { thoughtsRouter } from "./thoughts";
 
-export const apiRouter = new Elysia({
-  prefix: "/api",
-})
+export const apiRouter = new Elysia()
   .use(
     cors({
       origin: "http://localhost:3000",
@@ -14,5 +12,4 @@ export const apiRouter = new Elysia({
       allowedHeaders: ["Content-Type", "Authorization"],
     }),
   )
-  .use(authRouter)
-  .use(thoughtsRouter);
+  .group("/api", (app) => app.use(authRouter).use(thoughtsRouter));
