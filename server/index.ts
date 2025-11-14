@@ -7,6 +7,7 @@ import { apiRouter } from "./api";
 import { initializeSchema, runWithSql } from "./db";
 import { compressionPlugin } from "./util/compression";
 import { ensureClientBundleInProd } from "./util/production";
+import { railwayIpGenerator } from "./util/rate-limiting";
 
 await ensureClientBundleInProd();
 
@@ -41,7 +42,11 @@ const app = new Elysia({
 				},
 			},
 })
-	.use(rateLimit())
+	.use(
+		rateLimit({
+			generator: railwayIpGenerator,
+		}),
+	)
 	.use(compressionPlugin)
 	.use(apiRouter)
 	.use(
