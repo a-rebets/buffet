@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { c, colors } from "./printing";
 
 function runBetterAuth(args: string) {
-  return $`bunx --bun --no-install --silent @better-auth/cli ${{ raw: args }} -y`;
+  return $`bunx --bun --silent @better-auth/cli ${{ raw: args }} -y`;
 }
 
 function generateSecret(): string {
