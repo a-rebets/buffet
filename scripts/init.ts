@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { $ } from "bun";
 import { format } from "date-fns";
+import { isProduction } from "elysia/error";
 import { c, colors } from "./printing";
 
 function runBetterAuth(args: string) {
@@ -14,7 +15,7 @@ function generateSecret(): string {
 console.log(c(colors.primary, "\nInitializing ...\n", true));
 
 const hasEnvFile = await Bun.file(".env").exists();
-if (!hasEnvFile) {
+if (!hasEnvFile && !isProduction) {
   const secret = generateSecret();
   const envContent = `BETTER_AUTH_SECRET=${secret}
 BETTER_AUTH_URL=http://localhost:3000
