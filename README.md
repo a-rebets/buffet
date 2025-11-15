@@ -50,5 +50,10 @@ The stack has shifted to a more opinionated setup (previously based on HTMX and 
 - [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
 - Client data fetching is done with `@tanstack/svelte-query`
+- [Biome](https://biomejs.dev/guides/getting-started/) is used for linting and formatting
+- To adjust rate limiting, refer to the [plugin's documentation](https://github.com/rayriffy/elysia-rate-limit)
+
+> ❗ Note for Biome:  
+> if you are on **Linux** (not macOS), replace the `@biomejs/cli-darwin-arm64` binary package with the appropriate one for your platform (see this [list](https://www.npmjs.com/search?q=@biomejs/cli-*))
 
 **Contributions are welcome** to keep polishing the experience!
