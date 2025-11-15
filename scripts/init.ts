@@ -4,8 +4,19 @@ import { format } from "date-fns";
 import { isProduction } from "elysia/error";
 import { c, colors } from "./printing";
 
-function runBetterAuth(args: string) {
-  return $`bunx --bun --silent @better-auth/cli ${{ raw: args }} -y`;
+async function runBetterAuth(args: string) {
+  const argsArray = args.split(/\s+/).filter(Boolean);
+  const proc = Bun.spawn(
+    ["bunx", "--bun", "@better-auth/cli", ...argsArray, "-y"],
+    {
+      stdout: "inherit",
+      stderr: "inherit",
+    },
+  );
+  await proc.exited;
+  if (proc.exitCode !== 0) {
+    throw new Error(`Command failed with exit code ${proc.exitCode}`);
+  }
 }
 
 function generateSecret(): string {
