@@ -7,9 +7,9 @@
 import type { Generator } from "elysia-rate-limit";
 
 export const railwayIpGenerator: Generator = (request: Request, server) => {
-	const railwayIp = request.headers.get("X-Real-IP");
-	if (railwayIp) return railwayIp;
+  const railwayIp = request.headers.get("X-Real-IP");
+  if (railwayIp) return railwayIp;
 
-	// Fall back to default IP detection for direct connections or local dev
-	return server?.requestIP(request)?.address ?? "";
+  // Fall back to default IP detection for direct connections or local dev
+  return server?.requestIP(request)?.address ?? "";
 };

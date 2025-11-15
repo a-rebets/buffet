@@ -9,6 +9,7 @@ import { compressionPlugin } from "./util/compression";
 import { ensureClientBundleInProd } from "./util/production";
 import { railwayIpGenerator } from "./util/rate-limiting";
 
+const label = isProduction ? "[PROD]" : "[DEV]";
 await ensureClientBundleInProd();
 
 /*
@@ -33,42 +34,45 @@ await ensureClientBundleInProd();
  *   routing internals of Elysia, this should be fixed in the future.
  */
 
-const app = new Elysia({
-	serve: isProduction
-		? undefined
-		: {
-				routes: {
-					"/api/*": false,
-				},
-			},
-})
-	.use(
-		rateLimit({
-			generator: railwayIpGenerator,
-		}),
-	)
-	.use(compressionPlugin)
-	.use(apiRouter)
-	.use(
-		isProduction
-			? await staticPlugin({
-					assets: "dist",
-					prefix: "/",
-					alwaysStatic: true,
-					indexHTML: false,
-				})
-			: undefined,
-	)
-	.get(
-		"/*",
-		isProduction ? () => new Response(Bun.file("dist/index.html")) : indexHtml,
-	)
-	.onStart(async ({ server }) => {
-		await runWithSql(initializeSchema);
-		console.log(
-			`${isProduction ? "[PROD]" : "[DEV]"} 🚀 Server running on port ${server?.port}`,
-		);
-	})
-	.listen(3000);
+const baseApp = new Elysia()
+  .use(
+    rateLimit({
+      max: 100, // 100 requests per minute
+      generator: railwayIpGenerator,
+    }),
+  )
+  .use(apiRouter)
+  .onStart(async (app) => {
+    await runWithSql(initializeSchema);
+    console.log(`${label} 🚀 Server running on port ${app.server?.port}`);
+  });
 
-export type App = typeof app;
+if (isProduction) {
+  new Elysia()
+    .use(baseApp)
+    .use(
+      await staticPlugin({
+        assets: "dist",
+        prefix: "/",
+        alwaysStatic: true,
+        indexHTML: false,
+      }),
+    )
+    .get("/*", new Response(Bun.file("dist/index.html")))
+    .use(compressionPlugin)
+    .listen(process.env.PORT ?? 3000);
+} else {
+  new Elysia({
+    serve: {
+      routes: {
+        "/api/*": false,
+      },
+    },
+  })
+    .use(baseApp)
+    .get("/*", indexHtml)
+    .use(compressionPlugin)
+    .listen(3000);
+}
+
+export type App = typeof baseApp;

@@ -1,0 +1,43 @@
+diff --git a/dist/index.js b/dist/index.js
+index 8c0cecf1b1dc4218e6001ecec04a64f6cdc1bc32..fe55ae83cd804edb258e73305601b01a34fec877 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -112,7 +112,7 @@ const plugin = function rateLimitPlugin(userOptions) {
+ 			name: "elysia-rate-limit",
+ 			seed: options.max
+ 		});
+-		plugin$1.onBeforeHandle({ as: options.scoping }, async function onBeforeHandleRateLimitHandler({ set, request, query, path, store, cookie, error, body, params, headers, qi,...rest }) {
++		plugin$1.onBeforeHandle({ as: options.scoping }, async function onBeforeHandleRateLimitHandler({ set, request, query, path, store, cookie, error, params, headers, qi }) {
+ 			let clientKey;
+ 			const enhancedRequest = Object.defineProperty(request, "cookie", { value: cookie });
+ 			/**
+@@ -121,14 +121,14 @@ const plugin = function rateLimitPlugin(userOptions) {
+ 			* this is made to skip generating key unnecessary if only check for request
+ 			* and saving some cpu consumption when actually skipped
+ 			*/
+-			if (options.skip.length >= 2) clientKey = await options.generator(enhancedRequest, options.injectServer?.() ?? app.server, rest);
++			if (options.skip.length >= 2) clientKey = await options.generator(enhancedRequest, options.injectServer?.() ?? app.server);
+ 			if (await options.skip(enhancedRequest, clientKey) === false) {
+ 				/**
+ 				* if a skip option has less than two parameters,
+ 				* that's mean clientKey does not have a key yet
+ 				* then generate one
+ 				*/
+-				if (options.skip.length < 2) clientKey = await options.generator(enhancedRequest, options.injectServer?.() ?? app.server, rest);
++				if (options.skip.length < 2) clientKey = await options.generator(enhancedRequest, options.injectServer?.() ?? app.server);
+ 				const { count, nextReset } = await options.context.increment(clientKey);
+ 				const payload = {
+ 					limit: options.max,
+@@ -159,10 +159,10 @@ const plugin = function rateLimitPlugin(userOptions) {
+ 				logger("plugin", "clientKey %s passed through with %d/%d request used (resetting in %d seconds)", clientKey, options.max - payload.remaining, options.max, reset);
+ 			}
+ 		});
+-		plugin$1.onError({ as: options.scoping }, async function onErrorRateLimitHandler({ set, request, query, path, store, cookie, error, body, params, headers, qi, code,...rest }) {
++		plugin$1.onError({ as: options.scoping }, async function onErrorRateLimitHandler({ set, request, query, path, store, cookie, error, params, headers, qi, code }) {
+ 			if (!options.countFailedRequest) {
+ 				const enhancedRequest = Object.defineProperty(request, "cookie", { value: cookie });
+-				const clientKey = await options.generator(enhancedRequest, options.injectServer?.() ?? app.server, rest);
++				const clientKey = await options.generator(enhancedRequest, options.injectServer?.() ?? app.server);
+ 				logger("plugin", "request failed for clientKey: %s, refunding", clientKey);
+ 				await options.context.decrement(clientKey);
+ 			}
