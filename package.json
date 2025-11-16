@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "sv-router && bun run --watch --no-clear-screen server/index.ts",
     "build": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null",
-    "start": "NODE_ENV=production bun run server/index.ts",
+    "start": "NODE_ENV=production bun run --tsconfig-override=config/tsconfig.server.json server/index.ts",
     "format": "biome format --fix",
     "lint": "biome check --fix . && svelte-check",
     "postinstall": "sv-router",
