@@ -1,4 +1,3 @@
-import { Database } from "bun:sqlite";
 import { randomBytes } from "node:crypto";
 import { $ } from "bun";
 import { format } from "date-fns";
@@ -9,23 +8,16 @@ function runBetterAuth(args: string) {
   return $`bunx --bun --silent @better-auth/cli ${{ raw: args }} -y`;
 }
 
-function runMigration(sql: string) {
-  const db = new Database("app.db");
-  try {
-    db.run(sql);
-  } finally {
-    db.close();
-  }
-}
-
 function generateSecret(): string {
   return randomBytes(16).toString("hex");
 }
 
+if (isProduction) process.exit(0);
+
 console.log(c(colors.primary, "\nInitializing ...\n", true));
 
 const hasEnvFile = await Bun.file(".env").exists();
-if (!hasEnvFile && !isProduction) {
+if (!hasEnvFile) {
   const secret = generateSecret();
   const envContent = `BETTER_AUTH_SECRET=${secret}
 BETTER_AUTH_URL=http://localhost:3000
@@ -53,20 +45,8 @@ if (files.trim().length === 0) {
   migrationFile = files.split("\n")[0]?.trim() ?? "";
 }
 
-if (isProduction) {
-  // In production, run the SQL file directly (no better-auth CLI)
-  const sql = await Bun.file(migrationFile).text();
-  if (!sql.trim()) {
-    console.error(`Migration file ${migrationFile} is empty or missing`);
-    process.exit(1);
-  }
-  runMigration(sql);
-  console.log("✓ Migration applied");
-} else {
-  // In development, use better-auth CLI
-  await runBetterAuth(`generate --output ${migrationFile}`);
-  await runBetterAuth("migrate");
-}
+await runBetterAuth(`generate --output ${migrationFile}`);
+await runBetterAuth("migrate");
 
 console.log(
   c(

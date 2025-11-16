@@ -4,7 +4,7 @@ import { isProduction } from "elysia/error";
 import { rateLimit } from "elysia-rate-limit";
 import indexHtml from "../public/index.html";
 import { apiRouter } from "./api";
-import { initializeSchema, runWithSql } from "./db";
+import { runMigrations, runWithSql } from "./db";
 import { compressionPlugin } from "./util/compression";
 import { ensureClientBundleInProd } from "./util/production";
 import { railwayIpGenerator } from "./util/rate-limiting";
@@ -43,7 +43,7 @@ const baseApp = new Elysia()
   )
   .use(apiRouter)
   .onStart(async (app) => {
-    await runWithSql(initializeSchema);
+    await runWithSql(runMigrations);
     console.log(`${label} 🚀 Server running on port ${app.server?.port}`);
   });
 

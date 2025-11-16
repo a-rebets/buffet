@@ -6,7 +6,7 @@ import { thoughtsRouter } from "./thoughts";
 export const apiRouter = new Elysia()
   .use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.RAILWAY_PUBLIC_DOMAIN ?? "http://localhost:3000",
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],

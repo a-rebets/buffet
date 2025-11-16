@@ -1,23 +1,31 @@
+import { Database } from "bun:sqlite";
+import { readdirSync } from "node:fs";
 import { BunFileSystem } from "@effect/platform-bun";
 import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { Effect, Layer } from "effect";
+import { DB_PATH } from "./util/constants";
 
 export const SqlLive = SqliteClient.layer({
-  filename: "app.db",
+  filename: DB_PATH,
   disableWAL: true,
 }).pipe(Layer.provide(BunFileSystem.layer));
 
-export const initializeSchema = Effect.gen(function* () {
-  const sql = yield* SqliteClient.SqliteClient;
-  yield* sql`
-    CREATE TABLE IF NOT EXISTS thoughts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      content TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      user_id TEXT NOT NULL,
-      FOREIGN KEY(user_id) REFERENCES user(id)
-    )
-  `;
+export const runMigrations = Effect.gen(function* () {
+  const files = yield* Effect.sync(() => readdirSync("migrations"));
+  const contents = yield* Effect.forEach(files, (file) =>
+    Effect.promise(() => Bun.file(`migrations/${file}`).text()),
+  );
+  const combined = contents.join("\n");
+
+  yield* Effect.acquireUseRelease(
+    Effect.sync(() => new Database(DB_PATH)),
+    (db) =>
+      Effect.try({
+        try: () => db.run(combined),
+        catch: (error) => new Error(`Migration failed: ${error}`),
+      }),
+    (db) => Effect.sync(() => db.close()),
+  );
 });
 
 export const runWithSql = <A, E>(

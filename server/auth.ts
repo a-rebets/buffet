@@ -1,14 +1,17 @@
 import { Database } from "bun:sqlite";
 import { betterAuth } from "better-auth";
 import Elysia from "elysia";
+import { DB_PATH } from "./util/constants";
 
 export const auth = betterAuth({
   basePath: "/auth",
-  database: new Database("app.db"),
+  database: new Database(DB_PATH),
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [
+    process.env.RAILWAY_PUBLIC_DOMAIN ?? "http://localhost:3000",
+  ],
 });
 
 export const authRouter = new Elysia({ name: "auth" })
