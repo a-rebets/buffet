@@ -1,11 +1,11 @@
 <script lang="ts">
   import LoginForm from "@components/auth/login.svelte";
-  import { navigate } from "sv-router/generated";
   import {
     type AuthFormErrors,
     createEmptyErrors,
     signUp,
-  } from "@/lib/auth-client";
+  } from "@lib/auth-client";
+  import { navigate } from "sv-router/generated";
 
   let email = $state("");
   let password = $state("");

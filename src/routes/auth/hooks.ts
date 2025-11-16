@@ -1,6 +1,6 @@
+import { getSession } from "@lib/auth-client";
 import type { Hooks } from "sv-router";
 import { navigate } from "sv-router/generated";
-import { getSession } from "@/lib/auth-client";
 
 export default {
   async beforeLoad() {

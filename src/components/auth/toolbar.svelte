@@ -1,13 +1,13 @@
 <script lang="ts">
   import * as Avatar from "@components/ui/avatar/index.js";
   import { Button } from "@components/ui/button/index.js";
+  import { signOut, useSession } from "@lib/auth-client";
   import {
     createMutation,
     createQuery,
     useQueryClient,
   } from "@tanstack/svelte-query";
   import { navigate } from "sv-router/generated";
-  import { signOut, useSession } from "@/lib/auth-client";
 
   const queryClient = useQueryClient();
 

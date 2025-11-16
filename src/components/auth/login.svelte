@@ -3,10 +3,10 @@
   import * as Card from "@components/ui/card/index.js";
   import * as Field from "@components/ui/field/index.js";
   import { Input } from "@components/ui/input/index.js";
+  import type { AuthFormErrors } from "@lib/auth-client";
   import { p } from "sv-router/generated";
   import loginImage from "@/assets/login.jpg";
   import signupImage from "@/assets/signup.jpg";
-  import type { AuthFormErrors } from "@/lib/auth-client";
 
   let {
     id,
