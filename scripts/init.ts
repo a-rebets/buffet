@@ -1,25 +1,20 @@
+import { Database } from "bun:sqlite";
 import { randomBytes } from "node:crypto";
 import { $ } from "bun";
 import { format } from "date-fns";
 import { isProduction } from "elysia/error";
 import { c, colors } from "./printing";
 
-async function runBetterAuth(args: string) {
-  const argsArray = args.split(/\s+/).filter(Boolean);
-  const { stderr, exited } = Bun.spawn(
-    ["bunx", "--bun", "@better-auth/cli", ...argsArray, "-y"],
-    {
-      stdout: "inherit",
-      stderr: "pipe",
-    },
-  );
-  const [exitCode, stderrText]: [number, string] = await Promise.all([
-    exited,
-    stderr.text(),
-  ]);
-  if (exitCode !== 0) {
-    console.error(stderrText);
-    throw new Error(`Process exited with code ${exitCode}`);
+function runBetterAuth(args: string) {
+  return $`bunx --bun --silent @better-auth/cli ${{ raw: args }} -y`;
+}
+
+function runMigration(sql: string) {
+  const db = new Database("app.db");
+  try {
+    db.run(sql);
+  } finally {
+    db.close();
   }
 }
 
@@ -58,8 +53,20 @@ if (files.trim().length === 0) {
   migrationFile = files.split("\n")[0]?.trim() ?? "";
 }
 
-await runBetterAuth(`generate --output ${migrationFile}`);
-await runBetterAuth("migrate");
+if (isProduction) {
+  // In production, run the SQL file directly (no better-auth CLI)
+  const sql = await Bun.file(migrationFile).text();
+  if (!sql.trim()) {
+    console.error(`Migration file ${migrationFile} is empty or missing`);
+    process.exit(1);
+  }
+  runMigration(sql);
+  console.log("✓ Migration applied");
+} else {
+  // In development, use better-auth CLI
+  await runBetterAuth(`generate --output ${migrationFile}`);
+  await runBetterAuth("migrate");
+}
 
 console.log(
   c(
