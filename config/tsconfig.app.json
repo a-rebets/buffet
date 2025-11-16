@@ -1,0 +1,15 @@
+{
+  "extends": ["./tsconfig.base.json", "../.router/tsconfig.json"],
+  "compilerOptions": {
+    // Browser environment
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "preserve",
+
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false,
+
+    "types": ["bun-types", "svelte"]
+  },
+  "include": ["../src/**/*", "../src/**/*.svelte"]
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    // Stricter checks for server code
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedSideEffectImports": true,
+
+    "types": ["bun-types"]
+  },
+  "include": ["../server/**/*", "../scripts/**/*"]
+}

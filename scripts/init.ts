@@ -6,16 +6,20 @@ import { c, colors } from "./printing";
 
 async function runBetterAuth(args: string) {
   const argsArray = args.split(/\s+/).filter(Boolean);
-  const proc = Bun.spawn(
+  const { stderr, exited } = Bun.spawn(
     ["bunx", "--bun", "@better-auth/cli", ...argsArray, "-y"],
     {
       stdout: "inherit",
-      stderr: "inherit",
+      stderr: "pipe",
     },
   );
-  await proc.exited;
-  if (proc.exitCode !== 0) {
-    throw new Error(`Command failed with exit code ${proc.exitCode}`);
+  const [exitCode, stderrText]: [number, string] = await Promise.all([
+    exited,
+    stderr.text(),
+  ]);
+  if (exitCode !== 0) {
+    console.error(stderrText);
+    throw new Error(`Process exited with code ${exitCode}`);
   }
 }
 

@@ -1,16 +1,10 @@
 {
+  "files": [],
+  "references": [
+    { "path": "./config/tsconfig.server.json" },
+    { "path": "./config/tsconfig.app.json" }
+  ],
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleDetection": "force",
-    "allowJs": true,
-
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -20,21 +14,6 @@
       "@server/*": ["./server/*"],
       "@server": ["./server"],
       "sv-router/generated": ["./.router/router.ts"]
-    },
-
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false,
-
-    "types": ["bun-types", "svelte"]
-  },
-  "include": ["src/**/*", "src/**/*.svelte", "server/**/*", "scripts/*"],
-  "exclude": ["node_modules", "dist"],
-  "extends": ["./.router/tsconfig.json"]
+    }
+  }
 }
