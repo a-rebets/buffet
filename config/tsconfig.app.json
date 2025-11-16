@@ -5,11 +5,23 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "preserve",
 
+    // Path mappings
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@server/*": ["./server/*"],
+      "@server": ["./server"],
+      "sv-router/generated": ["./.router/router.ts"]
+    },
+
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
     "types": ["bun-types", "svelte"]
   },
-  "include": ["../src/**/*", "../src/**/*.svelte"]
+  "include": ["../src/**/*"]
 }

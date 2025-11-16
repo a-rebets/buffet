@@ -1,7 +1,7 @@
 import { authPlugin } from "@server/auth";
+import { runWithSql } from "@server/db";
 import { Effect, Schema } from "effect";
 import Elysia, { t } from "elysia";
-import { runWithSql } from "server/db";
 import { deleteThought, getAllThoughts, insertThought } from "./db";
 import { ThoughtSchema } from "./schema";
 

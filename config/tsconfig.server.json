@@ -1,6 +1,12 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    // Path mappings
+    "baseUrl": "..",
+    "paths": {
+      "@server/*": ["./server/*"]
+    },
+
     // Stricter checks for server code
     "noUnusedLocals": true,
     "noUnusedParameters": true,
