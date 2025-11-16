@@ -33,6 +33,11 @@ bun i && bun run init && bun dev
 > If you have an older version of Bun, run `bun upgrade`  
 > If you are on Windows, I'm sorry for you  
 
+### About the init script
+
+The `bun run init` command sets up your project's database and environment. In development, it generates a migration file using the Better Auth CLI. That migration file must be committed to your repository for production deployments to work.
+
+In production, the init script runs migrations directly using Bun's native SQLite support, bypassing the need for the Better Auth CLI entirely. This avoids a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
 
 ## What's included?
 
