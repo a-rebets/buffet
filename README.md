@@ -33,11 +33,12 @@ bun i && bun run init && bun dev
 > If you have an older version of Bun, run `bun upgrade`  
 > If you are on Windows, I'm sorry for you  
 
-### About the init script
+### Some notes on the workflow
 
-The `bun run init` command sets up your project's database and environment. In development, it generates a migration file using the Better Auth CLI. That migration file must be committed to your repository for production deployments to work.
-
-In production, the init script runs migrations directly using Bun's native SQLite support, bypassing the need for the Better Auth CLI entirely. This avoids a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
+- The `bun run init` command sets up your project's environment and updates the auth schema.
+- The `bun run make-migrations` command generates migration scripts using drizzle-kit. Migrations should be committed to your repository for deployments to work.
+- In production, migrations are applied right after the server starts, in a separate Effect layer, using the SQLite migrator provided by Drizzle.
+- Avoid using the Better Auth CLI in production as it has a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
 
 ## What's included?
 
@@ -53,6 +54,7 @@ All basic building blocks are here - auth, DB operations, API, routing, etc.
 The stack has shifted to a more opinionated setup (previously based on HTMX and `@kitajs/html` JSX runtime):
 - [ElysiaJS](https://elysiajs.com/) gives Bun extra powers
 - [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe
+- [Drizzle ORM](https://orm.drizzle.team/docs/connect-bun-sqlite) enables type-safe database operations
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
 - Client data fetching is done with `@tanstack/svelte-query`
 - [Biome](https://biomejs.dev/guides/getting-started/) is used for linting and formatting
