@@ -33,17 +33,20 @@ bun i && bun run init && bun dev
 > If you have an older version of Bun, run `bun upgrade`  
 > If you are on Windows, I'm sorry for you  
 
-### About the init script
+### Some notes on the workflow
 
-The `bun run init` command sets up your project's database and environment. In development, it generates a migration file using the Better Auth CLI. That migration file must be committed to your repository for production deployments to work.
-
-In production, the init script runs migrations directly using Bun's native SQLite support, bypassing the need for the Better Auth CLI entirely. This avoids a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
+- The `bun run init` command sets up your project's environment and updates the auth schema.
+- The `bun run make-migrations` command generates migration scripts using drizzle-kit. Migrations should be committed to your repository for deployments to work.
+- In production, migrations are applied right after the server starts, in a separate Effect layer, using the SQLite migrator provided by Drizzle.
+- Avoid using the Better Auth CLI in production as it has a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
+- To adjust rate limiting, refer to the corresponding [plugin's documentation](https://github.com/rayriffy/elysia-rate-limit).
 
 ## What's included?
 
 The template is a work in progress, but it's ready for you to fork and ship your next project!
 All basic building blocks are here - auth, DB operations, API, routing, etc.
 
+[ElysiaJS](https://elysiajs.com/) supports the backend, it has a great ecosystem of plugins and various helpers for serving static files and implementing the API.  
 [Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
 [Shadcn Svelte](https://www.shadcn-svelte.com/docs/installation) components are added to unlock fast UI prototyping.  
 [Better Auth](https://better-auth.com/) is used for authentication.
@@ -51,12 +54,11 @@ All basic building blocks are here - auth, DB operations, API, routing, etc.
 ## Other stuff
 
 The stack has shifted to a more opinionated setup (previously based on HTMX and `@kitajs/html` JSX runtime):
-- [ElysiaJS](https://elysiajs.com/) gives Bun extra powers
 - [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe
+- [Drizzle ORM](https://orm.drizzle.team/docs/connect-bun-sqlite) enables type-safe database operations
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
-- Client data fetching is done with `@tanstack/svelte-query`
+- Client data fetching is done with [Svelte Query](https://tanstack.com/query/latest/docs/framework/svelte/overview)
 - [Biome](https://biomejs.dev/guides/getting-started/) is used for linting and formatting
-- To adjust rate limiting, refer to the [plugin's documentation](https://github.com/rayriffy/elysia-rate-limit)
 
 > ❗ Note for Biome:  
 > if you are on **Linux** (not macOS), replace the `@biomejs/cli-darwin-arm64` binary package with the appropriate one for your platform (see this [list](https://www.npmjs.com/search?q=@biomejs/cli-*))
