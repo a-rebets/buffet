@@ -11,6 +11,7 @@ const result = await Bun.build({
   sourcemap: false,
   target: "browser",
   splitting: true,
+  env: "inline",
 });
 
 await printBuildInfo(result);

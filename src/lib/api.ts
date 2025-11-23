@@ -1,7 +1,9 @@
 import { treaty } from "@elysiajs/eden";
 import type { App } from "@server";
 
-export const apiClient = treaty<App>("localhost:3000").api;
+export const apiClient = treaty<App>(
+  import.meta.env?.RAILWAY_PUBLIC_DOMAIN ?? "localhost:3000",
+).api;
 
 export async function apiResponse<T>(
   promise: Promise<{ data: T; error: null } | { data: null; error: unknown }>,

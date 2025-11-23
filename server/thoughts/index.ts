@@ -1,9 +1,9 @@
 import { authPlugin } from "@server/auth";
-import { runWithSql } from "@server/db";
-import { Effect, Schema } from "effect";
-import Elysia, { t } from "elysia";
+import { runWithDb } from "@server/db";
+import { Effect } from "effect";
+import { Elysia } from "elysia";
 import { deleteThought, getAllThoughts, insertThought } from "./db";
-import { ThoughtSchema } from "./schema";
+import { ThoughtInsertSchema } from "./schema";
 
 export const thoughtsRouter = new Elysia({
   name: "thoughts",
@@ -13,7 +13,7 @@ export const thoughtsRouter = new Elysia({
   .get(
     "",
     async ({ user }) => {
-      return await runWithSql(
+      return await runWithDb(
         getAllThoughts(user.id).pipe(Effect.catchAll(() => Effect.succeed([]))),
       );
     },
@@ -32,26 +32,22 @@ export const thoughtsRouter = new Elysia({
             ),
           )
         : Effect.fail("Thought content is required");
-
-      return await runWithSql(effect);
+      return await runWithDb(effect);
     },
     {
-      body: Schema.standardSchemaV1(ThoughtSchema.pick("content")),
+      body: ThoughtInsertSchema.pick({ content: true }),
       auth: true,
     },
   )
   .delete(
     "/:id",
     async ({ params, user }) => {
-      const effect = deleteThought(params.id, user.id).pipe(
+      const effect = deleteThought(parseInt(params.id, 10), user.id).pipe(
         Effect.catchAll(() => Effect.fail("Failed to delete thought" as const)),
       );
-      return await runWithSql(effect);
+      return await runWithDb(effect);
     },
     {
-      params: t.Object({
-        id: t.Number(),
-      }),
       auth: true,
     },
   );

@@ -1,26 +1,25 @@
-import { SqliteClient } from "@effect/sql-sqlite-bun";
+import * as SqliteDrizzle from "@effect/sql-drizzle/Sqlite";
+import { and, desc, eq } from "drizzle-orm";
 import { Effect } from "effect";
-import type { Thought } from "./schema";
+import { thoughts } from "./schema";
 
 const getAllThoughts = (userId: string) =>
   Effect.gen(function* () {
-    const sql = yield* SqliteClient.SqliteClient;
-    return yield* sql<Thought>`
-        SELECT *
-        FROM thoughts
-        WHERE user_id = ${userId}
-        ORDER BY created_at DESC
-      `;
+    const db = yield* SqliteDrizzle.SqliteDrizzle;
+    return yield* db
+      .select()
+      .from(thoughts)
+      .where(eq(thoughts.userId, userId))
+      .orderBy(desc(thoughts.createdAt));
   });
 
 const insertThought = (content: string, userId: string) =>
   Effect.gen(function* () {
-    const sql = yield* SqliteClient.SqliteClient;
-    const rows = yield* sql<Thought>`
-        INSERT INTO thoughts (content, user_id)
-        VALUES (${content}, ${userId})
-        RETURNING *
-      `;
+    const db = yield* SqliteDrizzle.SqliteDrizzle;
+    const rows = yield* db
+      .insert(thoughts)
+      .values({ content, userId })
+      .returning();
     const thought = rows[0];
     if (!thought) {
       return yield* Effect.fail("Failed to insert thought");
@@ -30,12 +29,11 @@ const insertThought = (content: string, userId: string) =>
 
 const deleteThought = (id: number, userId: string) =>
   Effect.gen(function* () {
-    const sql = yield* SqliteClient.SqliteClient;
-    const rows = yield* sql<{ id: number }>`
-        DELETE FROM thoughts
-        WHERE id = ${id} AND user_id = ${userId}
-        RETURNING id
-      `;
+    const db = yield* SqliteDrizzle.SqliteDrizzle;
+    const rows = yield* db
+      .delete(thoughts)
+      .where(and(eq(thoughts.id, id), eq(thoughts.userId, userId)))
+      .returning();
     if (rows.length === 0) {
       return yield* Effect.fail("Thought not found");
     }

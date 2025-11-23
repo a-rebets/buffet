@@ -3,18 +3,18 @@
   import { format } from "date-fns";
   import { Button } from "../ui/button";
 
-  const {
+  let {
     thought,
     onDelete,
     isDeleting = false,
-  } = $props<{
+  }: {
     thought: Thought;
     onDelete: (id: number) => void;
     isDeleting?: boolean;
-  }>();
+  } = $props();
 
   const createdDate = $derived(
-    format(new Date(thought.created_at), "MMMM d, yyyy 'at' h:mm a")
+    format(new Date(thought.createdAt), "MMMM d, yyyy 'at' h:mm a")
   );
 </script>
 

@@ -1,12 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { $ } from "bun";
-import { format } from "date-fns";
 import { isProduction } from "elysia/error";
 import { c, colors } from "./printing";
-
-function runBetterAuth(args: string) {
-  return $`bunx --bun --silent @better-auth/cli ${{ raw: args }} -y`;
-}
 
 function generateSecret(): string {
   return randomBytes(16).toString("hex");
@@ -14,7 +9,7 @@ function generateSecret(): string {
 
 if (isProduction) process.exit(0);
 
-console.log(c(colors.primary, "\nInitializing ...\n", true));
+console.log(c(colors.primary, "\nPreparing Buffet\n", true));
 
 const hasEnvFile = await Bun.file(".env").exists();
 if (!hasEnvFile) {
@@ -26,27 +21,8 @@ BETTER_AUTH_URL=http://localhost:3000
   console.log(c(colors.accent, "Added secrets to the .env file\n"));
 }
 
-await $`mkdir -p migrations`;
-
-let migrationFile: string;
-let files: string;
-
-try {
-  files = await $`ls migrations/*.sql`.quiet().text();
-} catch {
-  files = "";
-}
-
-if (files.trim().length === 0) {
-  const timestamp = format(new Date(), "yyyy-MM-dd_HH-mm");
-  migrationFile = `migrations/${timestamp}.sql`;
-  await $`touch ${migrationFile}`;
-} else {
-  migrationFile = files.split("\n")[0]?.trim() ?? "";
-}
-
-await runBetterAuth(`generate --output ${migrationFile}`);
-await runBetterAuth("migrate");
+console.log(c(colors.accent, "Running better-auth CLI ...\n"));
+await $`bunx --bun --silent @better-auth/cli generate --output server/auth/schema.ts --config server/auth/index.ts -y`;
 
 console.log(
   c(

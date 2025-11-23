@@ -3,5 +3,11 @@
   "references": [
     { "path": "./config/tsconfig.server.json" },
     { "path": "./config/tsconfig.app.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@server/*": ["./server/*"]
+    }
+  }
 }
