@@ -16,6 +16,7 @@ if (!hasEnvFile) {
   const secret = generateSecret();
   const envContent = `BETTER_AUTH_SECRET=${secret}
 BETTER_AUTH_URL=http://localhost:3000
+BUN_PUBLIC_DOMAIN=localhost:3000
 `;
   await Bun.write(".env", envContent);
   console.log(c(colors.accent, "Added secrets to the .env file\n"));

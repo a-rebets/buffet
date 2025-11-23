@@ -1,5 +1,6 @@
 [serve.static]
 plugins = ["bun-plugin-tailwind", "bun-plugin-svelte"]
+env = "BUN_PUBLIC_*"
 [install]
 exact = true
 optional = false
