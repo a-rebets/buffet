@@ -38,8 +38,9 @@ await ensureClientBundleInProd();
 const baseApp = new Elysia()
   .use(
     rateLimit({
-      max: 100, // 100 requests per minute
+      max: 50, // 50 requests per minute
       generator: railwayIpGenerator,
+      skip: (req: Request) => !req.url.includes("/api/"),
     }),
   )
   .use(apiRouter)
