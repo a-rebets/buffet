@@ -46,6 +46,8 @@ bun i && bun run init && bun dev
 The template is a work in progress, but it's ready for you to fork and ship your next project!
 All basic building blocks are here - auth, DB operations, API, routing, etc.
 
+While the stack was very simple at the start (based on HTMX and `@kitajs/html` JSX runtime), it has become much more opinionated. It's hard to be happy about having the super fast and lightweight client bundle, when the project is unmaintainable. We need the red squiggly lines in the editor, and the types, and reliable battle-tested solutions for common things like auth. Here are the picks:
+
 [ElysiaJS](https://elysiajs.com/) supports the backend, it has a great ecosystem of plugins and various helpers for serving static files and implementing the API.  
 [Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
 [Shadcn Svelte](https://www.shadcn-svelte.com/docs/installation) components are added to unlock fast UI prototyping.  
@@ -53,7 +55,6 @@ All basic building blocks are here - auth, DB operations, API, routing, etc.
 
 ## Other stuff
 
-The stack has shifted to a more opinionated setup (previously based on HTMX and `@kitajs/html` JSX runtime):
 - [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe
 - [Drizzle ORM](https://orm.drizzle.team/docs/connect-bun-sqlite) enables type-safe database operations
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
