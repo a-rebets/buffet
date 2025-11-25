@@ -4,7 +4,6 @@ import { navigate } from "sv-router/generated";
 
 export default {
   async beforeLoad({ pathname }) {
-    console.log("beforeLoad", pathname);
     if (pathname.startsWith("/auth")) {
       return;
     }
