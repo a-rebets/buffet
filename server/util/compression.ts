@@ -1,4 +1,4 @@
-import Elysia from "elysia";
+import { Elysia, file, type HTTPHeaders } from "elysia";
 import { isProduction } from "elysia/error";
 
 const getCompressedAssets = async () => {
@@ -7,33 +7,36 @@ const getCompressedAssets = async () => {
 
   if (!isProduction) return entries;
 
-  for await (const file of glob.scan({ cwd: "dist", onlyFiles: true })) {
-    entries.set(`/${file.replace(/\.gz$/, "")}`, `dist/${file}`);
+  for await (const asset of glob.scan({ cwd: "dist", onlyFiles: true })) {
+    entries.set(`/${asset.replace(/\.gz$/, "")}`, `dist/${asset}`);
   }
+
   return entries;
+};
+
+const copyHeadersFromResponse = (source: Response, target: HTTPHeaders) => {
+  source.headers.forEach((value, key) => {
+    if (!(key in target)) target[key] = value;
+  });
 };
 
 export const compressionPlugin = new Elysia({ name: "compression" })
   .decorate("compressedAssets", await getCompressedAssets())
   .onAfterHandle(
     { as: "global" },
-    ({ compressedAssets, set, responseValue, route }) => {
-      const normalizedPath = route === "/*" ? "/index.html" : route;
+    ({ compressedAssets, set, route, response }) => {
+      const isIndexPath = route === "/*" || route === "/";
+      const normalizedPath = isIndexPath ? "/index.html" : route;
       const gzFile = compressedAssets.get(normalizedPath);
 
       if (!gzFile) return;
 
-      const contentType =
-        responseValue instanceof Response
-          ? responseValue.headers.get("Content-Type")
-          : null;
+      if (response instanceof Response)
+        copyHeadersFromResponse(response, set.headers);
 
-      set.headers["Content-Encoding"] = "gzip";
-      set.headers.Vary = "Accept-Encoding";
-      if (contentType) {
-        set.headers["Content-Type"] = contentType;
-      }
+      set.headers["content-encoding"] = "gzip";
+      set.headers.vary = "Accept-Encoding";
 
-      return Bun.file(gzFile);
+      return file(gzFile);
     },
   );

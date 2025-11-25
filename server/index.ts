@@ -6,6 +6,7 @@ import indexHtml from "../public/index.html";
 import { apiRouter } from "./api";
 import { initDb } from "./db";
 import { compressionPlugin } from "./util/compression";
+import { CACHE_MAX_AGE } from "./util/constants";
 import { ensureClientBundleInProd } from "./util/production";
 import { railwayIpGenerator } from "./util/rate-limiting";
 
@@ -48,18 +49,26 @@ const baseApp = new Elysia()
   });
 
 if (isProduction) {
-  new Elysia()
+  new Elysia({ nativeStaticResponse: false })
+    .use(compressionPlugin)
     .use(baseApp)
     .use(
       await staticPlugin({
         assets: "dist",
         prefix: "/",
         alwaysStatic: true,
-        indexHTML: false,
+        maxAge: CACHE_MAX_AGE,
       }),
     )
-    .get("/*", new Response(Bun.file("dist/index.html")))
-    .use(compressionPlugin)
+    .get(
+      "/*",
+      () =>
+        new Response(Bun.file("dist/index.html"), {
+          headers: {
+            "cache-control": `public, max-age=${CACHE_MAX_AGE}`,
+          },
+        }),
+    )
     .listen(process.env.PORT ?? 3000);
 } else {
   new Elysia({
@@ -71,7 +80,6 @@ if (isProduction) {
   })
     .use(baseApp)
     .get("/*", indexHtml)
-    .use(compressionPlugin)
     .listen(3000);
 }
 
