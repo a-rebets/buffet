@@ -156,6 +156,7 @@
         src={imageSrc}
         alt={isSignup ? "Sign up" : "Login"}
         class="w-full h-full object-cover"
+        fetchpriority="high"
       />
     </div>
   </div>
