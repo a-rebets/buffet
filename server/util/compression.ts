@@ -7,8 +7,8 @@ const getCompressedAssets = async () => {
 
   if (!isProduction) return entries;
 
-  for await (const asset of glob.scan({ cwd: "dist", onlyFiles: true })) {
-    entries.set(`/${asset.replace(/\.gz$/, "")}`, `dist/${asset}`);
+  for await (const asset of glob.scan({ cwd: "dist/gzip", onlyFiles: true })) {
+    entries.set(`/${asset.replace(/\.gz$/, "")}`, `dist/gzip/${asset}`);
   }
 
   return entries;

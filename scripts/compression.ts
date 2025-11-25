@@ -28,17 +28,19 @@ export async function compressBuildAssets(distDir: string = defaultDistDir) {
     return;
   }
 
+  const gzipDir = `${distDir}/gzip`;
+  await $`mkdir -p ${gzipDir}`.quiet();
+
   for (const path of targets) {
     const absolutePath = `${distDir}/${path}`;
     const source = await Bun.file(absolutePath).arrayBuffer();
-    await Bun.write(`${absolutePath}.gz`, Bun.gzipSync(new Uint8Array(source)));
+    await Bun.write(
+      `${gzipDir}/${path}.gz`,
+      Bun.gzipSync(new Uint8Array(source)),
+    );
   }
 
-  const finalSize = await sizeToken(
-    $`(find . -maxdepth 1 -name '*.gz'; find . -maxdepth 1 -type f ! -name '*.gz' ! -exec test -f {}.gz \\;) | xargs du -ch | tail -1`
-      .cwd(distDir)
-      .quiet(),
-  );
+  const finalSize = await sizeToken($`du -sh`.cwd(gzipDir).quiet());
 
   const percent = ((targets.length / files.length) * 100).toFixed(2);
 

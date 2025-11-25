@@ -12,6 +12,10 @@ const result = await Bun.build({
   target: "browser",
   splitting: true,
   env: "inline",
+  naming: {
+    chunk: "chunk-[name]-[hash].[ext]",
+    asset: "asset-[name]-[hash].[ext]",
+  },
 });
 
 await printBuildInfo(result);
