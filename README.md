@@ -2,7 +2,9 @@
 
 # Buffet (**bu·fè**)
 
-<img src="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7GPbt7g3wBGbMJdRDxOSAZjuQ4Fs31PafCzWc6" alt="Buffet" width="500" height="auto" />
+<img src="https://a5lsx687lx.ufs.sh/f/fExbAB4WdS7GPbt7g3wBGbMJdRDxOSAZjuQ4Fs31PafCzWc6" alt="Buffet" width="500" height="auto" /><br/>
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/buffet-bun-effect?referralCode=M7vVjv&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ### Fresh ingredients, simple web dev
 
