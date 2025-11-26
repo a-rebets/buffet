@@ -48,7 +48,7 @@ bun i && bun run init && bun dev
 The template is a work in progress, but it's ready for you to fork and ship your next project!
 All basic building blocks are here - auth, DB operations, API, routing, etc.
 
-While the stack was very simple at the start (based on HTMX and `@kitajs/html` JSX runtime), it has become much more opinionated. It's hard to be happy about having the super fast and lightweight client bundle, when the project is unmaintainable. We need the red squiggly lines in the editor, and the types, and reliable battle-tested solutions for common things like auth. Here are the picks:
+While the stack was very simple at the start (based on HTMX and `@kitajs/html` JSX runtime), it has become much more opinionated. It's hard to be happy about having a super fast and lightweight client bundle, when the project is unmaintainable. We need the red squiggly lines in the editor, and the types, and reliable battle-tested solutions for common things like auth. Here are the picks:
 
 [ElysiaJS](https://elysiajs.com/) supports the backend, it has a great ecosystem of plugins and various helpers for serving static files and implementing the API.  
 [Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
