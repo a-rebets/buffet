@@ -3,9 +3,7 @@ import type { App } from "@server";
 
 // CAUTION: the env variable has to be present in the .env file
 // for this to work in development
-const apiAddress = process.env.BUN_PUBLIC_DOMAIN ?? "localhost:3000";
-
-export const apiClient = treaty<App>(apiAddress).api;
+export const apiClient = treaty<App>(process.env.BUN_PUBLIC_DOMAIN).api;
 
 export async function apiResponse<T>(
   promise: Promise<{ data: T; error: null } | { data: null; error: unknown }>,

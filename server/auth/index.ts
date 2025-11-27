@@ -1,5 +1,5 @@
 import { Database } from "bun:sqlite";
-import { DB_PATH, PUBLIC_ADDRESS } from "@server/util/constants";
+import { DB_PATH } from "@server/util/constants";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/bun-sqlite";
@@ -7,6 +7,7 @@ import Elysia from "elysia";
 import * as schema from "./schema";
 
 export const auth = betterAuth({
+  baseURL: process.env.BUN_PUBLIC_DOMAIN,
   basePath: "/auth",
   database: drizzleAdapter(drizzle(new Database(DB_PATH), { schema }), {
     provider: "sqlite",
@@ -14,9 +15,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: [
-    PUBLIC_ADDRESS ? `https://${PUBLIC_ADDRESS}` : "http://localhost:3000",
-  ],
+  trustedOrigins: [process.env.BUN_PUBLIC_DOMAIN ?? "http://localhost:3000"],
 });
 
 export const authRouter = new Elysia({ name: "auth" })
