@@ -2,13 +2,15 @@ import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
 import { isProduction } from "elysia/error";
 import { rateLimit } from "elysia-rate-limit";
-import indexHtml from "../public/index.html";
-import { apiRouter } from "./api";
-import { initDb } from "./db";
-import { compressionPlugin } from "./util/compression";
-import { CACHE_MAX_AGE } from "./util/constants";
-import { ensureClientBundleInProd } from "./util/production";
-import { railwayIpGenerator } from "./util/rate-limiting";
+import indexHtml from "public/index.html";
+import { apiRouter } from "server/api";
+import { initDb } from "server/db";
+import {
+  CACHE_MAX_AGE,
+  compressionPlugin,
+  ensureClientBundleInProd,
+  railwayIpGenerator,
+} from "server/util";
 
 const label = isProduction ? "[PROD]" : "[DEV]";
 await ensureClientBundleInProd();

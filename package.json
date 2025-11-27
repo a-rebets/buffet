@@ -1,12 +1,12 @@
 {
   "name": "buffet",
-  "module": "server/index.ts",
+  "module": "main.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "sv-router && bun run --watch --tsconfig-override=config/tsconfig.app.json server/index.ts",
+    "dev": "sv-router && bun run --watch --tsconfig-override=config/tsconfig.app.json app.ts",
     "build": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null",
-    "start": "NODE_ENV=production bun run --tsconfig-override=config/tsconfig.server.json server/index.ts",
+    "start": "NODE_ENV=production bun run --tsconfig-override=config/tsconfig.server.json app.ts",
     "make-migrations": "bunx --bun drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
     "format": "biome format --fix",
     "lint": "biome check --fix . && svelte-check",
