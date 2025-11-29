@@ -1,11 +1,11 @@
-import * as SqliteDrizzle from "@effect/sql-drizzle/Sqlite";
+import { SqliteDrizzle } from "@effect/sql-drizzle/Sqlite";
 import { and, desc, eq } from "drizzle-orm";
 import { Effect } from "effect";
 import { thoughts } from "./schema";
 
 const getAllThoughts = (userId: string) =>
   Effect.gen(function* () {
-    const db = yield* SqliteDrizzle.SqliteDrizzle;
+    const db = yield* SqliteDrizzle;
     return yield* db
       .select()
       .from(thoughts)
@@ -15,7 +15,7 @@ const getAllThoughts = (userId: string) =>
 
 const insertThought = (content: string, userId: string) =>
   Effect.gen(function* () {
-    const db = yield* SqliteDrizzle.SqliteDrizzle;
+    const db = yield* SqliteDrizzle;
     const rows = yield* db
       .insert(thoughts)
       .values({ content, userId })
@@ -29,7 +29,7 @@ const insertThought = (content: string, userId: string) =>
 
 const deleteThought = (id: number, userId: string) =>
   Effect.gen(function* () {
-    const db = yield* SqliteDrizzle.SqliteDrizzle;
+    const db = yield* SqliteDrizzle;
     const rows = yield* db
       .delete(thoughts)
       .where(and(eq(thoughts.id, id), eq(thoughts.userId, userId)))

@@ -1,21 +1,20 @@
-import { Database } from "bun:sqlite";
-import { DB_PATH } from "@server/util/constants";
+import { libsqlClient } from "@server/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/bun-sqlite";
+import { drizzle } from "drizzle-orm/libsql";
 import Elysia from "elysia";
 import * as schema from "./schema";
 
 export const auth = betterAuth({
-  baseURL: process.env.BUN_PUBLIC_DOMAIN,
+  baseURL: process.env.VERCEL_URL,
   basePath: "/auth",
-  database: drizzleAdapter(drizzle(new Database(DB_PATH), { schema }), {
+  database: drizzleAdapter(drizzle({ client: libsqlClient, schema }), {
     provider: "sqlite",
   }),
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: [process.env.BUN_PUBLIC_DOMAIN ?? "http://localhost:3000"],
+  trustedOrigins: [process.env.VERCEL_URL ?? "http://localhost:3000"],
 });
 
 export const authRouter = new Elysia({ name: "auth" })

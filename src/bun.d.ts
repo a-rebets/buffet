@@ -5,6 +5,6 @@ declare module "*.jpg" {
 
 declare module "bun" {
   interface Env {
-    BUN_PUBLIC_DOMAIN: string;
+    VERCEL_URL: string;
   }
 }

@@ -1,9 +1,9 @@
 import { treaty } from "@elysiajs/eden";
-import type { App } from "@server";
+import type { App } from "app.ts";
 
 // CAUTION: the env variable has to be present in the .env file
 // for this to work in development
-export const apiClient = treaty<App>(process.env.BUN_PUBLIC_DOMAIN).api;
+export const apiClient = treaty<App>(process.env.VERCEL_URL).api;
 
 export async function apiResponse<T>(
   promise: Promise<{ data: T; error: null } | { data: null; error: unknown }>,

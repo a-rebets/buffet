@@ -6,7 +6,7 @@ import { thoughtsRouter } from "./thoughts";
 export const apiRouter = new Elysia()
   .use(
     cors({
-      origin: process.env.BUN_PUBLIC_DOMAIN,
+      origin: process.env.VERCEL_URL,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
