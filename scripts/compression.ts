@@ -30,6 +30,7 @@ export async function compressBuildAssets(distDir: string = defaultDistDir) {
 
   const gzipDir = `${distDir}/gzip`;
   await $`mkdir -p ${gzipDir}`.quiet();
+  await $`cp app.ts ${distDir}/app.ts`.quiet();
 
   for (const path of targets) {
     const absolutePath = `${distDir}/${path}`;
