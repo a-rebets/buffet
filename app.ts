@@ -51,39 +51,38 @@ const baseApp = new Elysia()
     console.log(`${label} 🚀 Server running on port ${app.server?.port}`);
   });
 
-if (isProduction) {
-  new Elysia({ nativeStaticResponse: false })
-    .use(compressionPlugin)
-    .use(baseApp)
-    .use(
-      await staticPlugin({
-        assets: "dist",
-        prefix: "/",
-        alwaysStatic: true,
-        maxAge: CACHE_MAX_AGE,
-      }),
-    )
-    .get(
-      "/*",
-      () =>
-        new Response(Bun.file("dist/index.html"), {
-          headers: {
-            "cache-control": `public, max-age=${CACHE_MAX_AGE}`,
-          },
+const app = isProduction
+  ? new Elysia({ nativeStaticResponse: false })
+      .use(compressionPlugin)
+      .use(baseApp)
+      .use(
+        await staticPlugin({
+          assets: "dist",
+          prefix: "/",
+          alwaysStatic: true,
+          maxAge: CACHE_MAX_AGE,
         }),
-    )
-    .listen(process.env.PORT ?? 3000);
-} else {
-  new Elysia({
-    serve: {
-      routes: {
-        "/api/*": false,
+      )
+      .get(
+        "/*",
+        () =>
+          new Response(Bun.file("dist/index.html"), {
+            headers: {
+              "cache-control": `public, max-age=${CACHE_MAX_AGE}`,
+            },
+          }),
+      )
+  : new Elysia({
+      serve: {
+        routes: {
+          "/api/*": false,
+        },
       },
-    },
-  })
-    .use(baseApp)
-    .get("/*", indexHtml)
-    .listen(3000);
-}
+    })
+      .use(baseApp)
+      .get("/*", indexHtml)
+      .listen(3000);
+
+export default app;
 
 export type App = typeof baseApp;
