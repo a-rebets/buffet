@@ -6,51 +6,55 @@
   "scripts": {
     "dev": "sv-router && bun run --watch --tsconfig-override=config/tsconfig.app.json app.ts",
     "build": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null",
-    "start": "NODE_ENV=production bun run --tsconfig-override=config/tsconfig.server.json app.ts",
-    "make-migrations": "bunx --bun drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
+    "start": "NODE_ENV=production bun run --no-env-file --tsconfig-override=config/tsconfig.server.json app.ts",
     "format": "biome format --fix",
     "lint": "biome check --fix . && svelte-check",
     "postinstall": "sv-router",
     "init": "bun run scripts/init.ts",
-    "clean": "rm -rf dist/ node_modules/ .router/ .env app.db"
+    "db:generate": "drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
+    "clean": "rm -rf dist/ node_modules/ .router/ .env app.db",
+    "_b": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
     "@biomejs/cli-darwin-arm64": "2.3.3",
-    "@internationalized/date": "latest",
-    "bits-ui": "latest",
+    "@fontsource-variable/inter": "5.3.0",
+    "@internationalized/date": "3.12.3",
+    "@lucide/svelte": "1.33.0",
+    "bits-ui": "2.19.0",
     "bun-plugin-svelte": "0.0.6",
-    "bun-plugin-tailwind": "latest",
-    "bun-types": "latest",
-    "drizzle-kit": "latest",
-    "svelte-check": "latest",
-    "tailwindcss": "latest"
+    "bun-plugin-tailwind": "0.1.2",
+    "bun-types": "1.4.0",
+    "drizzle-kit": "1.0.0-rc.5-ab785fc",
+    "shadcn-svelte": "1.5.0",
+    "svelte-check": "4.7.6",
+    "tailwindcss": "4.3.3"
   },
   "dependencies": {
-    "@effect/platform-bun": "latest",
-    "@effect/sql-drizzle": "latest",
-    "@effect/sql-sqlite-bun": "latest",
-    "@elysiajs/cors": "latest",
-    "@elysiajs/eden": "latest",
-    "@elysiajs/static": "latest",
-    "@tanstack/svelte-query": "latest",
-    "better-auth": "latest",
-    "clsx": "latest",
-    "date-fns": "latest",
-    "drizzle-orm": "latest",
-    "drizzle-zod": "latest",
-    "effect": "latest",
-    "elysia": "latest",
-    "elysia-rate-limit": "4.4.2",
-    "sv-router": "0.10.4",
-    "svelte": "latest",
-    "tailwind-merge": "latest",
-    "tailwind-variants": "latest",
-    "tw-animate-css": "latest"
+    "@effect/platform-bun": "4.0.0-rc.111",
+    "@effect/sql-sqlite-bun": "4.0.0-rc.111",
+    "@elysiajs/cors": "1.4.2",
+    "@elysiajs/eden": "1.4.9",
+    "@elysiajs/static": "1.4.10",
+    "@tanstack/svelte-query": "6.1.40",
+    "better-auth": "1.7.1",
+    "clsx": "2.1.1",
+    "date-fns": "4.4.0",
+    "drizzle-orm": "1.0.0-rc.5-ab785fc",
+    "drizzle-zod": "0.8.3",
+    "effect": "4.0.0-rc.111",
+    "elysia": "1.4.29",
+    "elysia-rate-limit": "4.6.3",
+    "sv-router": "0.18.1",
+    "svelte": "5.56.10",
+    "tailwind-merge": "3.6.0",
+    "tailwind-variants": "3.3.1",
+    "tw-animate-css": "1.4.0"
+  },
+  "overrides": {
+    "bun": "1.4.0"
   },
   "patchedDependencies": {
-    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch",
-    "sv-router@0.10.4": "patches/sv-router@0.10.4.patch",
-    "elysia-rate-limit@4.4.2": "patches/elysia-rate-limit@4.4.2.patch"
+    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch"
   }
 }

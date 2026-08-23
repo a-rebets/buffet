@@ -12,8 +12,11 @@
 
 <div
 	bind:this={ref}
-	data-slot="card-title"
-	class={cn("text-base leading-snug font-medium group-data-[size=sm]/card:text-sm", className)}
+	data-slot="avatar-group"
+	class={cn(
+		"cn-avatar-group group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

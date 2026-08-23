@@ -1,3 +1,6 @@
+# Dev server stubs minify, so upstream sets preserveWhitespace: true and
+# diverges from prod (snippet/children breakage). Drop when a release
+# includes https://github.com/oven-sh/bun/pull/39376
 diff --git a/src/options.ts b/src/options.ts
 index 7e69abc180c978534a656ea97927175d62476880..0673c45a99650dae7c21d6d97c5bbd00a937b179 100644
 --- a/src/options.ts

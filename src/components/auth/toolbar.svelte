@@ -4,7 +4,6 @@
   import { signOut, useSession } from "@lib/auth-client";
   import {
     createMutation,
-    createQuery,
     useQueryClient,
   } from "@tanstack/svelte-query";
   import { navigate } from "sv-router/generated";
@@ -23,13 +22,13 @@
 </script>
 
 <footer
-  class="fixed bottom-0 left-0 right-0 border-t-[0.5px] border-yellow-600 dark:border-yellow-200 overflow-hidden py-0"
+  class="fixed bottom-0 left-0 right-0 z-50 overflow-hidden border-t-[0.5px] border-yellow-600 bg-amber-50/80 py-0 backdrop-blur-md dark:border-yellow-200 dark:bg-neutral-950/80"
 >
   <div
-    class="absolute inset-0 bg-linear-to-b from-yellow-600/10 to-transparent dark:from-yellow-200/5 to-50% dark:to-60% dark:to-transparent -z-10"
+    class="pointer-events-none absolute inset-0 bg-linear-to-b from-yellow-600/10 to-transparent dark:from-yellow-200/5"
   ></div>
   <div
-    class="container max-w-6xl mx-auto px-4 py-3 flex items-center justify-between select-none"
+    class="relative container mx-auto flex max-w-6xl items-center justify-between px-4 py-3 select-none"
   >
     <div class="flex items-center gap-3">
       {#if $session}

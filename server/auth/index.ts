@@ -8,9 +8,10 @@ import * as schema from "./schema";
 
 export const auth = betterAuth({
   baseURL: process.env.BUN_PUBLIC_DOMAIN,
-  basePath: "/auth",
-  database: drizzleAdapter(drizzle(new Database(DB_PATH), { schema }), {
+  basePath: "/api/auth",
+  database: drizzleAdapter(drizzle({ client: new Database(DB_PATH) }), {
     provider: "sqlite",
+    schema,
   }),
   emailAndPassword: {
     enabled: true,

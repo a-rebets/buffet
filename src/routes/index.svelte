@@ -8,7 +8,7 @@
 <main
   class="min-h-screen h-fit w-full bg-linear-to-br from-amber-50 to-amber-100 dark:from-neutral-950 dark:to-neutral-900"
 >
-  <div class="container max-w-6xl mx-auto px-4 py-8">
+  <div class="container mx-auto max-w-6xl px-4 py-8 pb-24">
     <header class="text-center mb-10">
       <h1
         class="text-5xl font-light tracking-wide font-serif text-transparent bg-clip-text bg-linear-to-b from-yellow-600 to-amber-800 dark:from-yellow-400 dark:to-amber-500 from-40% mb-3 flex items-center justify-center gap-3"
