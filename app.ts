@@ -61,6 +61,16 @@ if (isProduction) {
         prefix: "/",
         alwaysStatic: true,
         maxAge: CACHE_MAX_AGE,
+        // Precompressed siblings are negotiated by compressionPlugin, not served raw.
+        ignorePatterns: [
+          ".DS_Store",
+          ".git",
+          ".env",
+          /\.gz$/,
+          /\.br$/,
+          /(?:^|\/)gzip\//,
+          /(?:^|\/)brotli\//,
+        ],
       }),
     )
     .get(

@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "sv-router && bun run --watch --tsconfig-override=config/tsconfig.app.json app.ts",
     "build": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null",
-    "start": "NODE_ENV=production bun run --tsconfig-override=config/tsconfig.server.json app.ts",
-    "make-migrations": "bunx --bun drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
+    "start": "NODE_ENV=production bun run --no-env-file --tsconfig-override=config/tsconfig.server.json app.ts",
+    "make-migrations": "bunx --bun --env-file=.env drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
     "format": "biome format --fix",
     "lint": "biome check --fix . && svelte-check",
     "postinstall": "sv-router",
     "init": "bun run scripts/init.ts",
-    "clean": "rm -rf dist/ node_modules/ .router/ .env app.db"
+    "clean": "rm -rf dist/ node_modules/ .router/ .env app.db",
+    "_b": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
@@ -41,16 +42,17 @@
     "drizzle-zod": "latest",
     "effect": "latest",
     "elysia": "latest",
-    "elysia-rate-limit": "4.4.2",
-    "sv-router": "0.10.4",
+    "elysia-rate-limit": "4.6.3",
+    "sv-router": "0.18.1",
     "svelte": "latest",
     "tailwind-merge": "latest",
     "tailwind-variants": "latest",
     "tw-animate-css": "latest"
   },
+  "overrides": {
+    "bun": "1.4.0"
+  },
   "patchedDependencies": {
-    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch",
-    "sv-router@0.10.4": "patches/sv-router@0.10.4.patch",
-    "elysia-rate-limit@4.4.2": "patches/elysia-rate-limit@4.4.2.patch"
+    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch"
   }
 }
