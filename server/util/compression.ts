@@ -103,9 +103,7 @@ export const negotiateEncoding = (
 
   if (candidates.length === 0) return "not_acceptable";
 
-  candidates.sort(
-    (a, b) => b.q - a.q || b.preference - a.preference,
-  );
+  candidates.sort((a, b) => b.q - a.q || b.preference - a.preference);
 
   return candidates[0]!.coding;
 };
@@ -153,8 +151,7 @@ export const compressionPlugin = new Elysia({ name: "compression" })
       });
 
       const acceptEncoding =
-        headers?.["accept-encoding"] ??
-        request.headers.get("accept-encoding");
+        headers?.["accept-encoding"] ?? request.headers.get("accept-encoding");
 
       const chosen = negotiateEncoding(acceptEncoding, available);
 

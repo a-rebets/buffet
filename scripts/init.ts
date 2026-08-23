@@ -22,7 +22,7 @@ BUN_PUBLIC_DOMAIN=http://localhost:3000
 }
 
 console.log(c(colors.accent, "Running better-auth CLI ...\n"));
-  await $`bunx --bun --env-file=.env --silent @better-auth/cli generate --output server/auth/schema.ts --config server/auth/index.ts -y`;
+await $`bunx --bun --env-file=.env --silent @better-auth/cli generate --output server/auth/schema.ts --config server/auth/index.ts -y`;
 
 console.log(
   c(

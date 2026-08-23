@@ -1,11 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, expect, test } from "bun:test";
-import {
-  type Started,
-  startBuffet,
-  stopIfRunning,
-  tempDbDir,
-} from "./helpers";
+import { type Started, startBuffet, stopIfRunning, tempDbDir } from "./helpers";
 
 const running: Started[] = [];
 
