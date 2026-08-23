@@ -4,7 +4,7 @@ import { isProduction } from "elysia/error";
 import { rateLimit } from "elysia-rate-limit";
 import indexHtml from "public/index.html";
 import { apiRouter } from "server/api";
-import { initDb } from "server/db";
+import { initDb, shutdownDb } from "server/db";
 import {
   CACHE_MAX_AGE,
   compressionPlugin,
@@ -51,8 +51,34 @@ const baseApp = new Elysia()
     console.log(`${label} 🚀 Server running on port ${app.server?.port}`);
   });
 
+const port = process.env.PORT ?? 3000;
+
+type HttpApp = {
+  stop: (closeActiveConnections?: boolean) => Promise<unknown>;
+};
+
+let httpApp: HttpApp;
+let shuttingDown = false;
+
+const shutdown = async () => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  let code = 0;
+  try {
+    await httpApp.stop();
+  } catch {
+    code = 1;
+  }
+  try {
+    await shutdownDb();
+  } catch {
+    code = 1;
+  }
+  process.exit(code);
+};
+
 if (isProduction) {
-  new Elysia({ nativeStaticResponse: false })
+  httpApp = new Elysia({ nativeStaticResponse: false })
     .use(compressionPlugin)
     .use(baseApp)
     .use(
@@ -82,9 +108,9 @@ if (isProduction) {
           },
         }),
     )
-    .listen(process.env.PORT ?? 3000);
+    .listen(port);
 } else {
-  new Elysia({
+  httpApp = new Elysia({
     serve: {
       routes: {
         "/api/*": false,
@@ -93,7 +119,14 @@ if (isProduction) {
   })
     .use(baseApp)
     .get("/*", indexHtml)
-    .listen(3000);
+    .listen(port);
 }
+
+process.on("SIGINT", () => {
+  void shutdown();
+});
+process.on("SIGTERM", () => {
+  void shutdown();
+});
 
 export type App = typeof baseApp;

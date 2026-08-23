@@ -38,8 +38,7 @@ bun i && bun run init && bun dev
 ### Some notes on the workflow
 
 - The `bun run init` command sets up your project's environment and updates the auth schema.
-- The `bun run make-migrations` command generates migration scripts using drizzle-kit. Migrations should be committed to your repository for deployments to work.
-- In production, migrations are applied right after the server starts, in a separate Effect layer, using the SQLite migrator provided by Drizzle.
+- On startup the server pushes `server/schema.ts` into SQLite. There is no migration folder to replay. Clone, `bun i`, `bun run init`, `bun dev`.
 - Avoid using the Better Auth CLI in production as it has a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
 - To adjust rate limiting, refer to the corresponding [plugin's documentation](https://github.com/rayriffy/elysia-rate-limit).
 
