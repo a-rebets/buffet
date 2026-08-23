@@ -11,6 +11,7 @@
     "lint": "biome check --fix . && svelte-check",
     "postinstall": "sv-router",
     "init": "bun run scripts/init.ts",
+    "db:generate": "drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
     "clean": "rm -rf dist/ node_modules/ .router/ .env app.db",
     "_b": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null"
   },
@@ -22,6 +23,7 @@
     "bun-plugin-svelte": "0.0.6",
     "bun-plugin-tailwind": "latest",
     "bun-types": "latest",
+    "drizzle-kit": "1.0.0-rc.5-ab785fc",
     "svelte-check": "latest",
     "tailwindcss": "latest"
   },
@@ -36,7 +38,6 @@
     "clsx": "latest",
     "date-fns": "latest",
     "drizzle-orm": "1.0.0-rc.5-ab785fc",
-    "drizzle-kit": "1.0.0-rc.5-ab785fc",
     "drizzle-zod": "latest",
     "effect": "4.0.0-rc.111",
     "elysia": "latest",
