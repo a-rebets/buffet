@@ -11,6 +11,12 @@
     "hooks": "@hooks",
     "lib": "@lib"
   },
-  "typescript": true,
-  "registry": "https://shadcn-svelte.com/registry"
+  "typescript": {
+    "config": "config/tsconfig.app.json"
+  },
+  "registry": "https://shadcn-svelte.com/registry",
+  "style": "nova",
+  "iconLibrary": "lucide",
+  "menuColor": "default",
+  "menuAccent": "subtle"
 }
