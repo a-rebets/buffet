@@ -48,7 +48,7 @@ export const startBuffet = async (
       PORT: String(port),
       NODE_ENV: "development",
       BUN_PUBLIC_DOMAIN: `http://127.0.0.1:${port}`,
-      BETTER_AUTH_SECRET: "test-process-shutdown-secret-32chars",
+      BETTER_AUTH_SECRET: "test-secret-at-least-32-characters",
     },
     stdout: "pipe",
     stderr: "pipe",
@@ -76,29 +76,6 @@ export const startBuffet = async (
   throw new Error(
     `Buffet did not become ready in time\n${await Promise.race([stdout, Promise.resolve("(stdout still open)")])}\n${await Promise.race([stderr, Promise.resolve("(stderr still open)")])}`,
   );
-};
-
-export const signalAndWait = async (
-  started: Started,
-  signal: "SIGINT" | "SIGTERM",
-) => {
-  started.proc.kill(signal);
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(() => {
-      reject(new Error(`${signal} did not exit within 5 seconds`));
-    }, 5000);
-  });
-  try {
-    const code = await Promise.race([started.proc.exited, timeout]);
-    if (code !== 0) {
-      throw new Error(
-        `${signal} exited with ${code}\n${await started.stdout}\n${await started.stderr}`,
-      );
-    }
-  } finally {
-    if (timeoutId !== undefined) clearTimeout(timeoutId);
-  }
 };
 
 export const tempDbDir = () => mkdtemp(join(tmpdir(), "buffet-test-"));

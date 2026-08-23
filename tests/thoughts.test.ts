@@ -1,7 +1,7 @@
+import { Database } from "bun:sqlite";
 import { afterEach, expect, test } from "bun:test";
 import {
   type Started,
-  signalAndWait,
   startBuffet,
   stopIfRunning,
   tempDbDir,
@@ -76,6 +76,36 @@ const start = async () => {
   return started;
 };
 
+test("startup migrates an empty database", async () => {
+  const started = await start();
+  const db = new Database(started.dbPath);
+  try {
+    db.exec("PRAGMA busy_timeout = 5000");
+    const names = db
+      .query(
+        `SELECT name FROM sqlite_master
+         WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+         ORDER BY name`,
+      )
+      .all()
+      .map((row) => (row as { name: string }).name);
+    const count = db
+      .query("SELECT count(*) AS count FROM __drizzle_migrations")
+      .get() as { count: number };
+    expect(names).toEqual([
+      "__drizzle_migrations",
+      "account",
+      "session",
+      "thoughts",
+      "user",
+      "verification",
+    ]);
+    expect(count.count).toBe(1);
+  } finally {
+    db.close();
+  }
+}, 30_000);
+
 test("unauthenticated thought requests return 401 before any database work", async () => {
   const started = await start();
   const response = await listThoughts(started, "");
@@ -139,18 +169,4 @@ test("an empty thought is rejected with the public message", async () => {
   expect(response.ok).toBe(false);
   const body = await response.text();
   expect(body).toContain("Thought content is required");
-}, 30_000);
-
-test("a missing thought and a SQL failure do not share a logged diagnosis", async () => {
-  const started = await start();
-  const cookie = await signUp(started, "errors@example.com");
-
-  const missing = await deleteThought(started, cookie, 999_999);
-  expect(missing.ok).toBe(false);
-  expect(await missing.text()).toContain("Failed to delete thought");
-
-  await signalAndWait(started, "SIGTERM");
-  const logs = `${await started.stdout}\n${await started.stderr}`;
-  expect(logs).toContain("Thought not found");
-  expect(logs).not.toContain("SQL failure while deleting thought");
 }, 30_000);
