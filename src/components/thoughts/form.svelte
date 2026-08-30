@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "@components/ui/button/index.js";
-  import { apiClient, apiResponse, thoughtsKeys } from "@lib/api";
+  import { createThought as createThoughtRequest, thoughtsKeys } from "@lib/api";
   import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 
   let content = $state("");
@@ -9,8 +9,7 @@
   const queryClient = useQueryClient();
 
   const createThought = createMutation(() => ({
-    mutationFn: (newContent: string) =>
-      apiResponse(apiClient.thoughts.post({ content: newContent })),
+    mutationFn: (newContent: string) => createThoughtRequest(newContent),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: thoughtsKeys.all() });
     },

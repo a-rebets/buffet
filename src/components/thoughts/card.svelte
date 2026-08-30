@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Thought } from "@server/thoughts/schema";
+  import type { Thought } from "@lib/api";
   import { format } from "date-fns";
   import { Button } from "../ui/button";
 
