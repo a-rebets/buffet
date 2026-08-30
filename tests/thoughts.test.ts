@@ -165,3 +165,13 @@ test("an empty thought is rejected with the public message", async () => {
   const body = await response.text();
   expect(body).toContain("Thought content is required");
 }, 30_000);
+
+test("API requests are rate limited after 50 hits in a minute", async () => {
+  const started = await start();
+  const responses = await Promise.all(
+    Array.from({ length: 51 }, () => listThoughts(started, "")),
+  );
+  const limited = responses.filter((response) => response.status === 429);
+  expect(limited.length).toBeGreaterThan(0);
+  expect(limited[0]?.headers.get("retry-after")).toBeTruthy();
+}, 30_000);

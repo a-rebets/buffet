@@ -1,9 +1,16 @@
 import { Database } from "bun:sqlite";
 import { DB_PATH } from "@server/util/constants";
+import { Authorization, CurrentUser } from "@shared/api";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/bun-sqlite";
-import Elysia from "elysia";
+import { Effect, Layer } from "effect";
+import {
+  HttpEffect,
+  HttpRouter,
+  HttpServerRequest,
+} from "effect/unstable/http";
+import { HttpApiError } from "effect/unstable/httpapi";
 import * as schema from "./schema";
 
 export const auth = betterAuth({
@@ -19,25 +26,31 @@ export const auth = betterAuth({
   trustedOrigins: [process.env.BUN_PUBLIC_DOMAIN ?? "http://localhost:3000"],
 });
 
-export const authRouter = new Elysia({ name: "auth" })
-  .get("*", ({ request }) => auth.handler(request))
-  .post("*", ({ request }) => auth.handler(request));
-
-export const authPlugin = new Elysia({
-  name: "auth-plugin",
-}).macro({
-  auth: {
-    async resolve({ status, request: { headers } }) {
-      const session = await auth.api.getSession({
-        headers,
+export const AuthorizationLive = Layer.succeed(
+  Authorization,
+  Authorization.of((httpEffect) =>
+    Effect.gen(function* () {
+      const request = yield* HttpServerRequest.HttpServerRequest;
+      const headers =
+        request.source instanceof Request
+          ? request.source.headers
+          : new Headers(request.headers);
+      const session = yield* Effect.tryPromise({
+        try: () => auth.api.getSession({ headers }),
+        catch: () => new HttpApiError.Unauthorized(),
       });
+      if (!session) {
+        return yield* new HttpApiError.Unauthorized();
+      }
+      return yield* Effect.provideService(httpEffect, CurrentUser, {
+        id: session.user.id,
+      });
+    }),
+  ),
+);
 
-      if (!session) return status(401);
-
-      return {
-        user: session.user,
-        session: session.session,
-      };
-    },
-  },
-});
+export const AuthLive = HttpRouter.add(
+  "*",
+  "/api/auth/*",
+  HttpEffect.fromWebHandler((request) => auth.handler(request)),
+);

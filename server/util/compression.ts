@@ -1,5 +1,6 @@
-import { Elysia, file, status, type HTTPHeaders } from "elysia";
-import { isProduction } from "elysia/error";
+import { Effect } from "effect";
+import { HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
+import { isProduction } from "./production";
 
 type ContentCoding = "br" | "gzip" | "identity";
 
@@ -14,7 +15,7 @@ const CODING_PREFERENCE: Record<ContentCoding, number> = {
   identity: 1,
 };
 
-const getCompressedAssets = async (): Promise<CompressedAssets> => {
+export const getCompressedAssets = async (): Promise<CompressedAssets> => {
   const br = new Map<string, string>();
   const gzip = new Map<string, string>();
 
@@ -37,12 +38,6 @@ const getCompressedAssets = async (): Promise<CompressedAssets> => {
   }
 
   return { br, gzip };
-};
-
-const copyHeadersFromResponse = (source: Response, target: HTTPHeaders) => {
-  source.headers.forEach((value, key) => {
-    if (!(key in target)) target[key] = value;
-  });
 };
 
 /** Parse Accept-Encoding into coding → q-value. Missing header ⇒ identity only. */
@@ -83,7 +78,6 @@ const qualityFor = (
 ): number => {
   if (accept.has(coding)) return accept.get(coding) ?? 0;
   if (accept.has("*")) return accept.get("*") ?? 0;
-  // identity is acceptable unless explicitly refused via identity or *
   if (coding === "identity") return 1;
   return 0;
 };
@@ -105,42 +99,70 @@ export const negotiateEncoding = (
 
   candidates.sort((a, b) => b.q - a.q || b.preference - a.preference);
 
-  return candidates[0]!.coding;
+  const winner = candidates[0];
+  if (!winner) return "not_acceptable";
+  return winner.coding;
 };
 
-const normalizeAssetPath = (route: string, requestUrl: string): string => {
-  if (route === "/*" || route === "/") return "/index.html";
-  if (route && route !== "/*") return route;
-
-  const pathname = new URL(requestUrl).pathname;
+const assetKey = (pathname: string, assets: CompressedAssets): string => {
   if (pathname === "/" || pathname === "") return "/index.html";
+  if (assets.br.has(pathname) || assets.gzip.has(pathname)) return pathname;
+  if (
+    !pathname.includes(".") &&
+    (assets.br.has("/index.html") || assets.gzip.has("/index.html"))
+  ) {
+    return "/index.html";
+  }
   return pathname;
 };
 
-export const compressionPlugin = new Elysia({ name: "compression" })
-  .decorate("compressedAssets", await getCompressedAssets())
-  .onAfterHandle(
-    { as: "global" },
-    ({ compressedAssets, set, route, request, response, headers }) => {
-      const normalizedPath = normalizeAssetPath(route, request.url);
-      const brFile = compressedAssets.br.get(normalizedPath);
-      const gzipFile = compressedAssets.gzip.get(normalizedPath);
+const withVary = (
+  response: HttpServerResponse.HttpServerResponse,
+): HttpServerResponse.HttpServerResponse => {
+  const existing = response.headers.vary;
+  const vary = existing?.includes("Accept-Encoding")
+    ? existing
+    : existing
+      ? `${existing}, Accept-Encoding`
+      : "Accept-Encoding";
+  return HttpServerResponse.setHeader(response, "vary", vary);
+};
 
-      // Only negotiate assets that have at least one precompressed variant.
-      if (!brFile && !gzipFile) return;
+export const precompression =
+  (assets: CompressedAssets) =>
+  <E, R>(
+    httpEffect: Effect.Effect<HttpServerResponse.HttpServerResponse, E, R>,
+  ): Effect.Effect<
+    HttpServerResponse.HttpServerResponse,
+    E,
+    R | HttpServerRequest.HttpServerRequest
+  > =>
+    Effect.gen(function* () {
+      const request = yield* HttpServerRequest.HttpServerRequest;
+      const pathname = request.url.split("?")[0] ?? "/";
 
-      const currentStatus =
-        response instanceof Response ? response.status : (set.status ?? 200);
-
-      // Leave redirects and errors alone; still attach Vary on 304.
-      if (typeof currentStatus === "number" && currentStatus === 304) {
-        set.headers.vary = "Accept-Encoding";
-        return;
+      if (
+        pathname.startsWith("/gzip/") ||
+        pathname.startsWith("/brotli/") ||
+        pathname.endsWith(".gz") ||
+        pathname.endsWith(".br")
+      ) {
+        return HttpServerResponse.empty({ status: 404 });
       }
 
-      if (typeof currentStatus === "number" && currentStatus !== 200) {
-        return;
+      const response = yield* httpEffect;
+
+      if (response.status === 304) {
+        return withVary(response);
       }
+      if (response.status !== 200) {
+        return response;
+      }
+
+      const key = assetKey(pathname, assets);
+      const brFile = assets.br.get(key);
+      const gzipFile = assets.gzip.get(key);
+      if (!brFile && !gzipFile) return response;
 
       const available: ContentCoding[] = (
         ["br", "gzip", "identity"] as const
@@ -150,31 +172,33 @@ export const compressionPlugin = new Elysia({ name: "compression" })
         return true;
       });
 
-      const acceptEncoding =
-        headers?.["accept-encoding"] ?? request.headers.get("accept-encoding");
-
-      const chosen = negotiateEncoding(acceptEncoding, available);
-
-      set.headers.vary = "Accept-Encoding";
+      const chosen = negotiateEncoding(
+        request.headers["accept-encoding"],
+        available,
+      );
 
       if (chosen === "not_acceptable") {
-        return status(406, "Not Acceptable");
+        return HttpServerResponse.empty({ status: 406 });
       }
-
       if (chosen === "identity") {
-        return;
+        return withVary(response);
       }
 
       const compressedPath = chosen === "br" ? brFile : gzipFile;
-      if (!compressedPath) return;
+      if (!compressedPath) return withVary(response);
 
-      if (response instanceof Response)
-        copyHeadersFromResponse(response, set.headers);
+      const headers: Record<string, string> = { ...response.headers };
+      delete headers["content-length"];
+      headers["content-encoding"] = chosen;
+      const existingVary = headers.vary;
+      headers.vary = existingVary?.includes("Accept-Encoding")
+        ? existingVary
+        : existingVary
+          ? `${existingVary}, Accept-Encoding`
+          : "Accept-Encoding";
 
-      // Compressed body length replaces any identity Content-Length.
-      delete set.headers["content-length"];
-      set.headers["content-encoding"] = chosen;
-
-      return file(compressedPath);
-    },
-  );
+      return HttpServerResponse.raw(Bun.file(compressedPath), {
+        status: 200,
+        headers,
+      });
+    });
