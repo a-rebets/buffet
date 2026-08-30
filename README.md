@@ -42,7 +42,7 @@ bun i && bun run init && bun dev
 - After changing a schema under `server/`, run `bun run db:generate`. Review and commit the generated SQL in `migrations/`.
 - A production SQLite database needs a persistent volume and one application instance. Move to a network database before adding replicas.
 - Avoid using the Better Auth CLI in production as it has a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
-- To adjust rate limiting, refer to the corresponding [plugin's documentation](https://github.com/rayriffy/elysia-rate-limit).
+- Rate limiting is a small Effect HTTP middleware in `server/util/rate-limiting.ts` (50 requests per minute on `/api/` paths).
 
 ## What's included?
 
@@ -51,14 +51,14 @@ All basic building blocks are here - auth, DB operations, API, routing, etc.
 
 While the stack was very simple at the start (based on HTMX and `@kitajs/html` JSX runtime), it has become much more opinionated. It's hard to be happy about having a super fast and lightweight client bundle, when the project is unmaintainable. We need the red squiggly lines in the editor, and the types, and reliable battle-tested solutions for common things like auth. Here are the picks:
 
-[ElysiaJS](https://elysiajs.com/) supports the backend, it has a great ecosystem of plugins and various helpers for serving static files and implementing the API.  
+[Effect](https://effect.website/) HTTP is the backend: `HttpApi` for the typed API, `HttpStaticServer` for the production SPA, and `BunHttpServer` to listen.  
 [Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
 [Shadcn Svelte](https://www.shadcn-svelte.com/docs/installation) components are added to unlock fast UI prototyping.  
 [Better Auth](https://better-auth.com/) is used for authentication.
 
 ## Other stuff
 
-- [Eden Treaty](https://elysiajs.com/eden/overview.html) keeps RPC calls end-to-end type safe
+- `HttpApiClient` is generated from the same `HttpApi` definition the server implements
 - [Drizzle ORM](https://orm.drizzle.team/docs/connect-bun-sqlite) enables type-safe database operations
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
 - Client data fetching is done with [Svelte Query](https://tanstack.com/query/latest/docs/framework/svelte/overview)
