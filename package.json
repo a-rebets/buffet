@@ -33,14 +33,14 @@
     "tailwindcss": "4.3.3"
   },
   "dependencies": {
-    "@effect/platform-bun": "4.0.0-rc.111",
-    "@effect/sql-sqlite-bun": "4.0.0-rc.111",
+    "@effect/platform-bun": "4.0.0-rc.112",
+    "@effect/sql-sqlite-bun": "4.0.0-rc.112",
     "@tanstack/svelte-query": "6.1.40",
     "better-auth": "1.7.1",
     "clsx": "2.1.1",
     "date-fns": "4.4.0",
     "drizzle-orm": "1.0.0-rc.5-ab785fc",
-    "effect": "4.0.0-rc.111",
+    "effect": "4.0.0-rc.112",
     "openapi-fetch": "0.17.0",
     "sv-router": "0.18.1",
     "svelte": "5.56.10",
