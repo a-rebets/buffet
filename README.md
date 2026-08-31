@@ -9,7 +9,7 @@
 ### Fresh ingredients, simple web dev
 
 Buffet is a template for 2025. Let's recognize where we stand:
-- Bun is awesome and powerful
+- Bun is awesome
 - Effect is a new way of thinking about type and exception safety
 - TailwindCSS makes styling easier for both humans and AI
 
@@ -30,7 +30,7 @@ bun i && bun run init && bun dev
 ```
 
 > **⚠️ Warning**  
-> Bun >= 1.3.0 is required.  
+> Bun >= 1.4.0 is required.  
 > If you don't have Bun installed, run `curl -fsSL https://bun.com/install | bash`  
 > If you have an older version of Bun, run `bun upgrade`  
 > If you are on Windows, I'm sorry for you  
@@ -40,9 +40,10 @@ bun i && bun run init && bun dev
 - The `bun run init` command sets up your project's environment and updates the auth schema.
 - The server applies committed migrations automatically before it starts accepting requests. A fresh clone does not need a separate migration command.
 - After changing a schema under `server/`, run `bun run db:generate`. Review and commit the generated SQL in `migrations/`.
+- After changing `shared/api.ts`, run `bun run generate:api`. `postinstall` and `dev` already do this, the same way they run the sv-router codegen. The spec lands in `.openapi/`, the types in `src/lib/api-types.gen.ts`. Neither is committed.
 - A production SQLite database needs a persistent volume and one application instance. Move to a network database before adding replicas.
 - Avoid using the Better Auth CLI in production as it has a dependency on `better-sqlite3`, which requires V8 C++ APIs that [Bun doesn't currently support](https://github.com/oven-sh/bun/issues/4290).
-- Rate limiting is a small Effect HTTP middleware in `server/util/rate-limiting.ts` (50 requests per minute on `/api/` paths).
+- Rate limiting is a fixed-window per-IP limiter in [`server/util/rate-limiting.ts`](server/util/rate-limiting.ts) (50 requests per minute on `/api/` paths).
 
 ## What's included?
 
@@ -51,14 +52,14 @@ All basic building blocks are here - auth, DB operations, API, routing, etc.
 
 While the stack was very simple at the start (based on HTMX and `@kitajs/html` JSX runtime), it has become much more opinionated. It's hard to be happy about having a super fast and lightweight client bundle, when the project is unmaintainable. We need the red squiggly lines in the editor, and the types, and reliable battle-tested solutions for common things like auth. Here are the picks:
 
-[Effect](https://effect.website/) HTTP is the backend: `HttpApi` for the typed API, `HttpStaticServer` for the production SPA, and `BunHttpServer` to listen.  
-[Svelte](https://svelte.dev/) SPA is the frontend solution of choice.  
+[Effect](https://effect.website/) is the server. `HttpApi` from `effect/unstable/httpapi` is the contract, `BunHttpServer` listens, `HttpStaticServer` serves the built SPA. SQLite goes through `@effect/sql-sqlite-bun` and drizzle. Request validation is Effect Schema in `shared/api.ts`. Failures stay typed until they become HTTP responses.  
+[Svelte](https://svelte.dev/) SPA is the frontend solution of choice. The browser never imports Effect, so the client bundle is 311K brotli, same as the old Elysia/Eden build, after dropping 6 packages and adding `openapi-fetch` plus `openapi-typescript`.  
 [Shadcn Svelte](https://www.shadcn-svelte.com/docs/installation) components are added to unlock fast UI prototyping.  
 [Better Auth](https://better-auth.com/) is used for authentication.
 
 ## Other stuff
 
-- The browser client is `openapi-fetch` plus types generated from the server `HttpApi` OpenAPI spec. Effect stays on the server.
+- The typed client is generated: `OpenApi.fromApi` writes a spec, `openapi-typescript` turns it into types, `openapi-fetch` calls the API
 - [Drizzle ORM](https://orm.drizzle.team/docs/connect-bun-sqlite) enables type-safe database operations
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
 - Client data fetching is done with [Svelte Query](https://tanstack.com/query/latest/docs/framework/svelte/overview)
