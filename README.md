@@ -8,7 +8,7 @@
 
 ### Fresh ingredients, simple web dev
 
-Buffet is a template for 2025. Let's recognize where we stand:
+Buffet is a template for 2026. Let's recognize where we stand:
 - Bun is awesome
 - Effect is a new way of thinking about type and exception safety
 - TailwindCSS makes styling easier for both humans and AI
