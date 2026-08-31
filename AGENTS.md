@@ -13,15 +13,6 @@ Buffet is a Bun + Svelte SPA template. Keep the dependency list small. Every pac
 - `src/` is the Svelte 5 SPA: sv-router codegen, shadcn-svelte/bits-ui, Tailwind 4.
 - `scripts/build.ts` bundles with `Bun.build`. `bun test` spawns the real server (`tests/helpers.ts`).
 
-## Commands
-
-- `bun dev` runs sv-router codegen, `generate:api`, then watches `app.ts`.
-- `bun test` runs integration tests against a spawned server.
-- `bun run lint` runs `biome check --fix` then `svelte-check`. Biome rewrites files in place.
-- `bun run build` writes the client bundle to `dist/`.
-- `bun run db:generate` after drizzle schema changes under `server/`.
-- `bun run generate:api` after changing `shared/api.ts`. `postinstall` and `dev` already run it.
-
 ## Hard rules
 
 Never import `effect` at runtime from `src/**`.
