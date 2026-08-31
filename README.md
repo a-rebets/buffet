@@ -58,7 +58,7 @@ While the stack was very simple at the start (based on HTMX and `@kitajs/html` J
 
 ## Other stuff
 
-- `HttpApiClient` is generated from the same `HttpApi` definition the server implements
+- The browser client is `openapi-fetch` plus types generated from the server `HttpApi` OpenAPI spec. Effect stays on the server.
 - [Drizzle ORM](https://orm.drizzle.team/docs/connect-bun-sqlite) enables type-safe database operations
 - Routing is powered by an awesome lightweight library [sv-router](https://sv-router.vercel.app/guide/getting-started) by [@colinlienard](https://github.com/colinlienard)
 - Client data fetching is done with [Svelte Query](https://tanstack.com/query/latest/docs/framework/svelte/overview)

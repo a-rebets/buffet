@@ -1,37 +1,46 @@
-import { Api, type Thought } from "@shared/api";
-import { type Effect, Layer, ManagedRuntime } from "effect";
-import { FetchHttpClient } from "effect/unstable/http";
-import { HttpApiClient } from "effect/unstable/httpapi";
+import createClient from "openapi-fetch";
+import type { operations, paths } from "./api-types.gen";
 
-export type { Thought };
+export type Thought =
+  operations["thoughts.list"]["responses"][200]["content"]["application/json"][number];
 
-const FetchLive = FetchHttpClient.layer.pipe(
-  Layer.provide(
-    Layer.succeed(FetchHttpClient.RequestInit, { credentials: "include" }),
-  ),
-);
+const client = createClient<paths>({
+  baseUrl: process.env.BUN_PUBLIC_DOMAIN,
+  credentials: "include",
+});
 
-const runtime = ManagedRuntime.make(FetchLive);
+function errorMessage(error: unknown): string {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object" && "_tag" in error) {
+    return String((error as { _tag: unknown })._tag);
+  }
+  return String(error ?? "Request failed");
+}
 
-const client = runtime.runSync(
-  HttpApiClient.make(Api, {
-    baseUrl: process.env.BUN_PUBLIC_DOMAIN,
-  }),
-);
+async function unwrap<T>(
+  promise: Promise<{ data?: T; error?: unknown; response: Response }>,
+): Promise<T> {
+  const { data, error, response } = await promise;
+  if (error !== undefined || !response.ok) {
+    throw new Error(errorMessage(error));
+  }
+  if (data === undefined) {
+    throw new Error("No data returned");
+  }
+  return data;
+}
 
-const run = <A, E>(effect: Effect.Effect<A, E>): Promise<A> =>
-  runtime.runPromise(effect).catch((error: unknown) => {
-    if (typeof error === "string") throw new Error(error);
-    throw error;
-  });
-
-export const listThoughts = () => run(client.thoughts.list());
+export const listThoughts = () => unwrap(client.GET("/api/thoughts"));
 
 export const createThought = (content: string) =>
-  run(client.thoughts.create({ payload: { content } }));
+  unwrap(client.POST("/api/thoughts", { body: { content } }));
 
 export const deleteThought = (id: number) =>
-  run(client.thoughts.delete({ params: { id } }));
+  unwrap(
+    client.DELETE("/api/thoughts/{id}", {
+      params: { path: { id: String(id) } },
+    }),
+  );
 
 export const thoughtsKeys = {
   all: () => ["thoughts"] as const,
