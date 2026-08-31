@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { apiClient, apiResponse, thoughtsKeys } from "@lib/api";
+  import {
+    deleteThought as deleteThoughtRequest,
+    listThoughts,
+    thoughtsKeys,
+  } from "@lib/api";
   import {
     createMutation,
     createQuery,
@@ -11,12 +15,11 @@
 
   const thoughtsQuery = createQuery(() => ({
     queryKey: thoughtsKeys.all(),
-    queryFn: () => apiResponse(apiClient.thoughts.get()),
+    queryFn: () => listThoughts(),
   }));
 
   const deleteThought = createMutation(() => ({
-    mutationFn: (id: number) =>
-      apiResponse(apiClient.thoughts({ id }).delete()),
+    mutationFn: (id: number) => deleteThoughtRequest(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: thoughtsKeys.all() });
     },

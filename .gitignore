@@ -39,3 +39,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # sv-router generated
 .router
+
+# OpenAPI generated
+.openapi
+src/lib/api-types.gen.ts

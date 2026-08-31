@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { $ } from "bun";
-import { isProduction } from "elysia/error";
+import { isProduction } from "../server/util/production";
 import { c, colors } from "./printing";
 
 function generateSecret(): string {

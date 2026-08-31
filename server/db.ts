@@ -6,7 +6,7 @@ import {
   type EffectSQLiteBunDatabase,
   makeWithDefaults,
 } from "drizzle-orm/effect-sqlite-bun";
-import { Context, Effect, Layer, ManagedRuntime } from "effect";
+import { Context, Effect, Layer } from "effect";
 import { DB_PATH } from "./util/constants";
 
 export class AppDb extends Context.Service<AppDb, EffectSQLiteBunDatabase>()(
@@ -43,18 +43,6 @@ const SqlLive = SqliteClient.layer({
   filename: DB_PATH,
 }).pipe(Layer.provide(MigrationLive));
 
-const AppLayer = Layer.effect(AppDb, makeWithDefaults()).pipe(
+export const AppLayer = Layer.effect(AppDb, makeWithDefaults()).pipe(
   Layer.provide(SqlLive),
 );
-
-const appRuntime = ManagedRuntime.make(AppLayer);
-
-let disposePromise: Promise<void> | undefined;
-
-export const runWithDb = appRuntime.runPromise;
-export const initDb = () => runWithDb(Effect.logInfo("DB initialized"));
-
-export const shutdownDb = (): Promise<void> => {
-  disposePromise ??= appRuntime.dispose();
-  return disposePromise;
-};

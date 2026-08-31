@@ -1,25 +1,46 @@
-import { treaty } from "@elysiajs/eden";
-import type { App } from "@server";
+import createClient from "openapi-fetch";
+import type { operations, paths } from "./api-types.gen";
 
-// CAUTION: the env variable has to be present in the .env file
-// for this to work in development
-export const apiClient = treaty<App>(process.env.BUN_PUBLIC_DOMAIN).api;
+export type Thought =
+  operations["thoughts.list"]["responses"][200]["content"]["application/json"][number];
 
-export async function apiResponse<T>(
-  promise: Promise<{ data: T; error: null } | { data: null; error: unknown }>,
-): Promise<T> {
-  const response = await promise;
+const client = createClient<paths>({
+  baseUrl: process.env.BUN_PUBLIC_DOMAIN,
+  credentials: "include",
+});
 
-  if (response.error && response.error !== null) {
-    throw new Error(String(response.error));
+function errorMessage(error: unknown): string {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object" && "_tag" in error) {
+    return String((error as { _tag: unknown })._tag);
   }
+  return String(error ?? "Request failed");
+}
 
-  if (response.data === null || response.data === undefined) {
+async function unwrap<T>(
+  promise: Promise<{ data?: T; error?: unknown; response: Response }>,
+): Promise<T> {
+  const { data, error, response } = await promise;
+  if (error !== undefined || !response.ok) {
+    throw new Error(errorMessage(error));
+  }
+  if (data === undefined) {
     throw new Error("No data returned");
   }
-
-  return response.data;
+  return data;
 }
+
+export const listThoughts = () => unwrap(client.GET("/api/thoughts"));
+
+export const createThought = (content: string) =>
+  unwrap(client.POST("/api/thoughts", { body: { content } }));
+
+export const deleteThought = (id: number) =>
+  unwrap(
+    client.DELETE("/api/thoughts/{id}", {
+      params: { path: { id: String(id) } },
+    }),
+  );
 
 export const thoughtsKeys = {
   all: () => ["thoughts"] as const,

@@ -1,4 +1,4 @@
-import { isProduction } from "elysia/error";
+export const isProduction = process.env.NODE_ENV === "production";
 
 export const ensureClientBundleInProd = async () => {
   if (isProduction) {

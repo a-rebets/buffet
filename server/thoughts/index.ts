@@ -1,10 +1,9 @@
-import { authPlugin } from "@server/auth";
-import { runWithDb } from "@server/db";
+import { AuthorizationLive } from "@server/auth";
+import { Api, CurrentUser } from "@shared/api";
 import { EffectDrizzleQueryError } from "drizzle-orm/effect-core/errors";
-import { Effect } from "effect";
-import { Elysia } from "elysia";
+import { Effect, Layer } from "effect";
+import { HttpApiBuilder } from "effect/unstable/httpapi";
 import { deleteThought, getAllThoughts, insertThought } from "./db";
-import { ThoughtInsertSchema } from "./schema";
 
 const isSqlFailure = (error: unknown): error is EffectDrizzleQueryError =>
   error instanceof EffectDrizzleQueryError;
@@ -27,43 +26,30 @@ const mapDeleteFailure = (error: unknown) =>
     return yield* Effect.fail("Failed to delete thought" as const);
   });
 
-export const thoughtsRouter = new Elysia({
-  name: "thoughts",
-  prefix: "/thoughts",
-})
-  .use(authPlugin)
-  .get(
-    "",
-    async ({ user }) => {
-      return await runWithDb(getAllThoughts(user.id));
-    },
-    {
-      auth: true,
-    },
-  )
-  .post(
-    "",
-    async ({ body, user }) => {
-      const trimmed = body.content.trim();
-      const effect = trimmed
-        ? insertThought(trimmed, user.id).pipe(Effect.catch(mapCreateFailure))
-        : Effect.fail("Thought content is required");
-      return await runWithDb(effect);
-    },
-    {
-      body: ThoughtInsertSchema.pick({ content: true }),
-      auth: true,
-    },
-  )
-  .delete(
-    "/:id",
-    async ({ params, user }) => {
-      const effect = deleteThought(parseInt(params.id, 10), user.id).pipe(
-        Effect.catch(mapDeleteFailure),
-      );
-      return await runWithDb(effect);
-    },
-    {
-      auth: true,
-    },
-  );
+export const ThoughtsLive = HttpApiBuilder.group(Api, "thoughts", (handlers) =>
+  handlers.handleAll({
+    list: () =>
+      Effect.gen(function* () {
+        const user = yield* CurrentUser;
+        return yield* getAllThoughts(user.id);
+      }),
+    create: ({ payload }) =>
+      Effect.gen(function* () {
+        const user = yield* CurrentUser;
+        const trimmed = payload.content.trim();
+        if (!trimmed) {
+          return yield* Effect.fail("Thought content is required");
+        }
+        return yield* insertThought(trimmed, user.id).pipe(
+          Effect.catch(mapCreateFailure),
+        );
+      }),
+    delete: ({ params }) =>
+      Effect.gen(function* () {
+        const user = yield* CurrentUser;
+        return yield* deleteThought(params.id, user.id).pipe(
+          Effect.catch(mapDeleteFailure),
+        );
+      }),
+  }),
+).pipe(Layer.provide(AuthorizationLive));
