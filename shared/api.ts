@@ -9,7 +9,7 @@ import {
 } from "effect/unstable/httpapi";
 
 export const Thought = Schema.Struct({
-  id: Schema.Number,
+  id: Schema.Int,
   content: Schema.String,
   createdAt: Schema.Date,
   userId: Schema.String,
