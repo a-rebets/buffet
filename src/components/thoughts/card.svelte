@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Thought } from "@lib/api";
-  import { format } from "date-fns";
   import { Button } from "../ui/button";
 
   let {
@@ -14,7 +13,13 @@
   } = $props();
 
   const createdDate = $derived(
-    format(new Date(thought.createdAt), "MMMM d, yyyy 'at' h:mm a")
+    new Date(thought.createdAt).toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    })
   );
 </script>
 
