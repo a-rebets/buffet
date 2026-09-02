@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "sv-router && bun run generate:api && bun run --watch --tsconfig-override=config/tsconfig.app.json app.ts",
-    "build": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null",
+    "build": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts",
     "start": "NODE_ENV=production bun run --no-env-file --tsconfig-override=config/tsconfig.server.json app.ts",
     "format": "biome format --fix",
     "lint": "biome check --fix . && svelte-check",
@@ -13,8 +13,7 @@
     "generate:api": "bun run scripts/openapi.ts",
     "init": "bun run scripts/init.ts",
     "db:generate": "drizzle-kit generate --dialect=sqlite --schema=server/schema.ts --out=migrations",
-    "clean": "rm -rf dist/ node_modules/ .router/ .openapi/ src/lib/api-types.gen.ts .env app.db",
-    "_b": "rm -rf dist && bun run --tsconfig-override=config/tsconfig.app.json scripts/build.ts 2> /dev/null"
+    "clean": "rm -rf dist/ node_modules/ .router/ .openapi/ src/lib/api-types.gen.ts .env app.db app.db-wal app.db-shm && find . -name .DS_Store -type f -delete"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.3",
@@ -50,6 +49,7 @@
     "bun": "1.4.0"
   },
   "patchedDependencies": {
-    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch"
+    "bun-plugin-svelte@0.0.6": "patches/bun-plugin-svelte@0.0.6.patch",
+    "@effect/platform-bun@4.0.0-rc.112": "patches/@effect%2Fplatform-bun@4.0.0-rc.112.patch"
   }
 }
