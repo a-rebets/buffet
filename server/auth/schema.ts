@@ -1,4 +1,11 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm/_relations";
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -37,9 +44,9 @@ export const account = sqliteTable(
   "account",
   {
     id: text("id").primaryKey(),
+    issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    issuer: text("issuer").notNull(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -59,7 +66,13 @@ export const account = sqliteTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [index("account_userId_idx").on(table.userId)],
+  (table) => [
+    uniqueIndex("account_issuer_accountId_uidx").on(
+      table.issuer,
+      table.accountId,
+    ),
+    index("account_userId_idx").on(table.userId),
+  ],
 );
 
 export const verification = sqliteTable(
@@ -76,3 +89,22 @@ export const verification = sqliteTable(
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
+
+export const userRelations = relations(user, ({ many }) => ({
+  sessions: many(session),
+  accounts: many(account),
+}));
+
+export const sessionRelations = relations(session, ({ one }) => ({
+  user: one(user, {
+    fields: [session.userId],
+    references: [user.id],
+  }),
+}));
+
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
+  }),
+}));

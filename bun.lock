@@ -24,6 +24,7 @@
         "@biomejs/cli-darwin-arm64": "2.3.3",
         "@fontsource-variable/inter": "5.3.0",
         "@internationalized/date": "3.12.3",
+        "@types/bun": "1.4.0",
         "bits-ui": "2.19.0",
         "bun-plugin-svelte": "0.0.6",
         "bun-plugin-tailwind": "0.1.2",
@@ -225,6 +226,8 @@
     "@tanstack/query-core": ["@tanstack/query-core@5.102.1", "", {}, "sha512-bJTsrO2ODWSgg+x1leTsK036GBtmNNjnrF1Vk06J5fg/phYZLQIdXrBe0uf5xTItXYvIW1MtbLhyPw7cPMqUUQ=="],
 
     "@tanstack/svelte-query": ["@tanstack/svelte-query@6.1.40", "", { "dependencies": { "@tanstack/query-core": "5.102.1" }, "peerDependencies": { "svelte": "^5.25.0" } }, "sha512-5JyFHHSggmWHsmNBhP+Br7ZLnIqIxLSpdxmvorNw65uD6/LitB886YgwSAH22X2Z4+HkPPAhHUUxOZUCidbQAA=="],
+
+    "@types/bun": ["@types/bun@1.4.0", "", { "dependencies": { "bun-types": "1.4.0" } }, "sha512-K+lZULY23vRgK/CfTjFIV+tyifaNdSMlPh9j+6mQ/cLfpOznLyAuzgV/JQysyECpkBQLVMSyvjlr2fBUSA9wFQ=="],
 
     "@types/estree": ["@types/estree@1.0.9", "", {}, "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg=="],
 

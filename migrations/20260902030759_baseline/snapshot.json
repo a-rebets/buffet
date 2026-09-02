@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "7e24c7fa-f3f6-451b-8c28-6bedbda95ad8",
+  "id": "c5813bd6-120e-4b38-86a1-d306441162b3",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -42,6 +42,16 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
+      "name": "issuer",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
       "name": "account_id",
       "entityType": "columns",
       "table": "account"
@@ -53,16 +63,6 @@
       "default": null,
       "generated": null,
       "name": "provider_id",
-      "entityType": "columns",
-      "table": "account"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "issuer",
       "entityType": "columns",
       "table": "account"
     },
@@ -505,6 +505,24 @@
       "name": "thoughts_pk",
       "table": "thoughts",
       "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "issuer",
+          "isExpression": false
+        },
+        {
+          "value": "account_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "account_issuer_accountId_uidx",
+      "entityType": "indexes",
+      "table": "account"
     },
     {
       "columns": [

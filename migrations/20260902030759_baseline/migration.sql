@@ -1,8 +1,8 @@
 CREATE TABLE `account` (
 	`id` text PRIMARY KEY,
+	`issuer` text NOT NULL,
 	`account_id` text NOT NULL,
 	`provider_id` text NOT NULL,
-	`issuer` text NOT NULL,
 	`user_id` text NOT NULL,
 	`access_token` text,
 	`refresh_token` text,
@@ -55,6 +55,7 @@ CREATE TABLE `thoughts` (
 	CONSTRAINT `fk_thoughts_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `account_issuer_accountId_uidx` ON `account` (`issuer`,`account_id`);--> statement-breakpoint
 CREATE INDEX `account_userId_idx` ON `account` (`user_id`);--> statement-breakpoint
 CREATE INDEX `session_userId_idx` ON `session` (`user_id`);--> statement-breakpoint
 CREATE INDEX `verification_identifier_idx` ON `verification` (`identifier`);

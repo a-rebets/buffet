@@ -13,8 +13,13 @@ import {
 import { HttpApiError } from "effect/unstable/httpapi";
 import * as schema from "./schema";
 
+const publicOrigin =
+  process.env.BETTER_AUTH_URL ??
+  process.env.BUN_PUBLIC_DOMAIN ??
+  "http://localhost:3000";
+
 export const auth = betterAuth({
-  baseURL: process.env.BUN_PUBLIC_DOMAIN,
+  baseURL: publicOrigin,
   basePath: "/api/auth",
   database: drizzleAdapter(drizzle({ client: new Database(DB_PATH) }), {
     provider: "sqlite",
@@ -23,7 +28,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: [process.env.BUN_PUBLIC_DOMAIN ?? "http://localhost:3000"],
+  trustedOrigins: [publicOrigin],
 });
 
 export const AuthorizationLive = Layer.succeed(

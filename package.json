@@ -24,6 +24,7 @@
     "bun-plugin-svelte": "0.0.6",
     "bun-plugin-tailwind": "0.1.2",
     "bun-types": "1.4.0",
+    "@types/bun": "1.4.0",
     "drizzle-kit": "1.0.0-rc.5-ab785fc",
     "openapi-typescript": "7.13.0",
     "shadcn-svelte": "1.5.0",

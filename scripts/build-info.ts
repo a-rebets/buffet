@@ -33,15 +33,17 @@ export async function printBuildInfo(result: BuildOutput): Promise<void> {
     }
 
     console.log(
-      c(
+      `\n${c(
         colors.primary,
-        "\n  Buffet is ready. Bon appétit! 🥐  \n",
+        "  Buffet is ready. Bon appétit! 🥐  ",
         false,
         colors.accentDark,
-      ),
+      )}\n`,
     );
   } else {
-    console.error(c("white", `\n🚨 Buffet build failed!\n`, false, "#440000"));
+    console.error(
+      `\n${c("white", "🚨 Buffet build failed!", false, "#440000")}\n`,
+    );
     for (const log of result.logs) console.error(log);
   }
 }

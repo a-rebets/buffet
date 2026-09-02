@@ -5,7 +5,8 @@ export type Thought =
   operations["thoughts.list"]["responses"][200]["content"]["application/json"][number];
 
 const client = createClient<paths>({
-  baseUrl: process.env.BUN_PUBLIC_DOMAIN,
+  // Same-origin relative URL — avoids process.env in the browser bundle.
+  baseUrl: "",
   credentials: "include",
 });
 
